@@ -1,0 +1,30 @@
+from Presentation.view_manager import ViewManager
+from BusinessLogic.employee_business_logic import EmployeeBusinessLogic
+# from DataAccess.Repositories.SQLite.employee_repository import SQLiteEmployeeRepository
+from DataAccess.Repositories.SQLServer.sql_server_employee_repository import SQLServerEmployeeRepository
+from BusinessLogic.account_business_logic import AccountBusinessLogic
+from DataAccess.Repositories.SQLServer.sql_server_account_repository import SqlServerAccountRepository
+from DataAccess.Repositories.SQLServer.sql_server_transaction_repository import SqlServerTransactionRepository
+from BusinessLogic.transaction_business_logic import TransactionBusinessLogic
+from BusinessLogic.customer_business_logic import CustomerBisinessLogic
+from DataAccess.Repositories.SQLServer.sql_server_customer_repository import SqlServerCustomerRepository
+
+
+
+
+# employee_repository = SQLiteEmployeeRepository()
+
+employee_repository = SQLServerEmployeeRepository()
+employee_business_logic= EmployeeBusinessLogic(employee_repository)
+
+account_repository=SqlServerAccountRepository()
+account_business_logic = AccountBusinessLogic(account_repository)
+
+transaction_repository = SqlServerTransactionRepository()
+transaction_business_logic=TransactionBusinessLogic(transaction_repository,account_repository)
+
+customer_repository = SqlServerCustomerRepository()
+customer_business = CustomerBisinessLogic(customer_repository)
+
+
+ViewManager(employee_business_logic,account_business_logic,transaction_business_logic,customer_business)
