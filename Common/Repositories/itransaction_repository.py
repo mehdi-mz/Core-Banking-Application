@@ -24,3 +24,7 @@ class ITransactionRepository(ABC):
     @abstractmethod
     def get_daily_transactions(self,account_number):
         pass
+
+    @abstractmethod
+    def card_to_card(self,new_transaction,old_balance_card):
+        pass

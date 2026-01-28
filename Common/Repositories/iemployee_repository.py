@@ -9,7 +9,7 @@ class IEmployeeRepository(ABC):
         pass
 
     @abstractmethod
-    def update_profile(self, id_employee, new_firstname, new_lastname, new_username, new_nationalcode, new_emil,new_status=None):
+    def update_profile(self, id_employee, new_firstname, new_lastname, new_username, new_nationalcode, new_emil,role_id,new_status=None):
         pass
 
 

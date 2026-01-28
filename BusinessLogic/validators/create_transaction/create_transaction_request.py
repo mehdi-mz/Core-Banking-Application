@@ -9,3 +9,4 @@ class CreateTransactionRequest:
     balance : float
     transaction_type : TransactionTypes
     max_transaction :float
+    card : Account = None

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
 @dataclass
-class ResetPasswoedRequest:
+class ResetPasswordRequest:
     password : str
     confirm_password :str

@@ -29,9 +29,9 @@ class SqlServerAccountRepository(IAccountRepository):
                            inner join 
                                  Account
                            on	 Customer.Id = Account.Customer_Id
-                           where First_Name    like %s
-                           or    Last_Name     like %s
+                           where Concat(First_Name,' ',Last_Name)  like %s
                            or    NationalCode  like %s
+                           or    Account_Number like %d
                            order by Created_Date  desc 
                            offset %d rows 
                            fetch next %d  rows only
@@ -68,8 +68,8 @@ class SqlServerAccountRepository(IAccountRepository):
                                         """, (skip_rows, page_size))
                 data = cursor.fetchall()
                 for row in data:
-                    costomer = Customer.create_with_dict(row)
-                    account = Account.create_with_dict(row, costomer)
+                    customer = Customer.create_with_dict(row)
+                    account = Account.create_with_dict(row,customer)
                     account_list.append(account)
 
         return account_list
@@ -100,8 +100,8 @@ class SqlServerAccountRepository(IAccountRepository):
             row = cursor.fetchone()
 
             if row :
-                costomer = Customer.create_with_dict(row)
-                account = Account.create_with_dict(row,costomer)
+                customer = Customer.create_with_dict(row)
+                account = Account.create_with_dict(row,customer)
         return account
 
     def create_account(self, national_code, status_id,type_id):
@@ -155,8 +155,8 @@ class SqlServerAccountRepository(IAccountRepository):
                                 order by Created_Date  desc """,(customer_id,))
             data = cursor.fetchall()
             for row in data:
-                costomer = Customer.create_with_dict(row)
-                account = Account.create_with_dict(row,costomer)
+                customer = Customer.create_with_dict(row)
+                account = Account.create_with_dict(row,customer)
                 account_list.append(account)
         return account_list
 

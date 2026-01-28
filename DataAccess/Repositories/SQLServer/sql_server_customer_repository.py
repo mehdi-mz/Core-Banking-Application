@@ -1,5 +1,6 @@
 from Common.Repositories.icustomer_repository import ICustomerRepository
 from Common.entities.customer import Customer
+from Common.entities.account import Account
 import pymssql
 
 class SqlServerCustomerRepository(ICustomerRepository):
@@ -19,15 +20,14 @@ class SqlServerCustomerRepository(ICustomerRepository):
                                     ,NationalCode,PhonNumber
                                     ,Email,BirthDate,Gender
                             from Customer 
-                            where First_Name like %s
-                            or    Last_Name  like %s
+                            where Concat(First_Name,' ',Last_Name) like %s
                             or    NationalCode like %s
                             order by id desc
                             offset %d rows 
                             fetch next %d  rows only """
 
                 value = f'%{term}%'
-                cursor.execute(query,(value,value,value,skip_rows,page_size))
+                cursor.execute(query,(value,value,skip_rows,page_size))
                 data = cursor.fetchall()
                 for row in data:
                     customer = Customer.create_with_dict(row)
@@ -130,6 +130,34 @@ class SqlServerCustomerRepository(ICustomerRepository):
                             where Customer_Id =%d """, (3, customer_id))
             connection.commit()
         return cursor.rowcount
+
+    def activated_customer(self, customer_id):
+        with self.creat_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute("""update Account
+                               set StatusId = %d 
+                               where Customer_Id =%d """, (1, customer_id))
+            connection.commit()
+        return cursor.rowcount
+
+    def get_customer_by_account_number(self,account_number):
+        with self.creat_connection() as connection:
+            cursor = connection.cursor(as_dict=True)
+            cursor.execute("""select Customer.*,Account.*
+                                        from Account
+                                        inner join 
+                                            Customer
+                                        on  Account.Customer_Id = Customer.Id
+                                        where Account.Account_Number = %d""", (account_number,))
+            row = cursor.fetchone()
+
+            if row:
+                customer = Customer.create_with_dict(row)
+                account = Account.create_with_dict(row,customer)
+
+                return account
+            else:
+                return None
 
 
 

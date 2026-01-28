@@ -50,7 +50,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
 
 
 
-    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_nationalcode,new_emil,new_status=None):
+    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_nationalcode,new_emil,role_id,new_status=None):
         with self.creat_connection() as connection:
             cursor = connection.cursor()
             if new_status :
@@ -62,10 +62,11 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                 ,     email = %s
                                 ,     username = %s
                                 ,     EmployeeStatus = %d
+                                ,     Role_id  = %d
                                 ,     status_changed_date = getdate()
                                 where  id = %d
                                 """,(new_firstname,new_lastname,new_nationalcode,new_emil
-                                                                        ,new_username,new_status,employee_id))
+                                                                        ,new_username,new_status,role_id,employee_id))
                 connection.commit()
             else:
                 cursor.execute("""
@@ -75,9 +76,10 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                                ,     nationalcode = %s 
                                                ,     email = %s
                                                ,     username = %s
+                                               ,      Role_id  = %d
                                                where  id = %d
                                                """,
-                               (new_firstname, new_lastname, new_nationalcode, new_emil, new_username, employee_id))
+                               (new_firstname, new_lastname, new_nationalcode, new_emil, new_username,role_id, employee_id))
                 connection.commit()
 
             return cursor.rowcount
@@ -101,15 +103,14 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                 ,status_changed_date
                          from staff.Employee
                          where EmployeeStatus = 2
-                         and  ( First_Name like %s
-                         or    Last_Name  like %s
+                         and  ( Concat(First_Name,' ',Last_Name) like %s
                          or    NationalCode like %s
                          or    UserName  like %s)
                          order by regester_date desc
                          offset %d rows 
                          fetch next %d  rows only"""
                 value = f'%{term}%'
-                cursor.execute(query, (value, value, value, value, skip_rows, page_size))
+                cursor.execute(query, (value, value, value, skip_rows, page_size))
                 data = cursor.fetchall()
                 for row in data:
                     employee = Employee.create_with_dict(row)
@@ -159,15 +160,14 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                     ,status_changed_date
                             from staff.Employee
                             where EmployeeStatus = 1
-                            and  ( First_Name like %s
-                            or    Last_Name  like %s
+                            and  ( Concat(First_Name,' ',Last_Name)  like %s
                             or    NationalCode like %s
                             or    UserName  like %s)
                             order by regester_date desc
                             offset %d rows 
                             fetch next %d  rows only"""
                 value = f'%{term}%'
-                cursor.execute(query,(value,value,value,value,skip_rows,page_size))
+                cursor.execute(query,(value,value,value,skip_rows,page_size))
                 data = cursor.fetchall()
                 for row in data:
                     request = Employee.create_with_dict(row)
@@ -252,6 +252,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
             cursor.execute("""
                             update staff.Employee
                             set   EmployeeStatus = %d
+                            ,     status_changed_date = GETDATE()
                             where  id = %d
                             """, (4, employee_id))
             connection.commit()
@@ -277,15 +278,14 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                     ,status_changed_date
                             from staff.Employee
                             where EmployeeStatus = 4
-                            and  ( First_Name like %s
-                            or    Last_Name  like %s
+                            and  ( Concat(First_Name,' ',Last_Name)  like %s
                             or    NationalCode like %s
                             or    UserName  like %s)
-                            order by regester_date desc
+                            order by status_changed_date desc
                             offset %d rows 
                             fetch next %d  rows only"""
                 value = f'%{term}%'
-                cursor.execute(query,(value,value,value,value,skip_rows,page_size))
+                cursor.execute(query,(value,value,value,skip_rows,page_size))
                 data = cursor.fetchall()
                 for row in data:
                     request = Employee.create_with_dict(row)
@@ -335,15 +335,14 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                     ,status_changed_date
                             from staff.Employee
                             where EmployeeStatus = 3
-                            and  ( First_Name like %s
-                            or    Last_Name  like %s
+                            and  ( Concat(First_Name,' ',Last_Name)  like %s
                             or    NationalCode like %s
                             or    UserName  like %s)
-                            order by regester_date desc
+                            order by status_changed_date desc
                             offset %d rows 
                             fetch next %d  rows only"""
                 value = f'%{term}%'
-                cursor.execute(query,(value,value,value,value,skip_rows,page_size))
+                cursor.execute(query,(value,value,value,skip_rows,page_size))
                 data = cursor.fetchall()
                 for row in data:
                     request = Employee.create_with_dict(row)
@@ -372,13 +371,3 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                     request = Employee.create_with_dict(row)
                     request_list.append(request)
         return request_list
-
-
-
-
-
-
-
-
-
-

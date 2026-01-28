@@ -3,6 +3,19 @@ from BusinessLogic.validators.base_handler import BaseHandler
 
 class PositiveAmountValidator(BaseHandler):
     def handel(self, request):
+        if  not request.transaction_amount :
+            raise ValueError("Amount cannot be empty.")
+
+        if not request.transaction_type:
+            raise ValueError("Transaction Type cannot be empty.")
+
+
+        # if not  request.transaction_amount.isdigit() :
+        #     raise ValueError("Invalid Amount value please enter integer type.")
+
+        if not request.transaction_type.strip() :
+            raise ValueError("Transaction Type cannot be empty.")
+
         if request.transaction_amount < 10000:
             raise ValueError("Invalid amount for new transaction.")
 

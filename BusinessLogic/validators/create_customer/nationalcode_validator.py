@@ -9,8 +9,8 @@ class NationalCodeValidator(BaseHandler):
         if len(request.national_code.strip())!= 10:
             raise ValueError("National Code value is out of valid range.")
 
-        if  request.national_code.isdigit():
-            raise  ValueError("Invalid value please enter integer type.")
+        if   not request.national_code.isdigit():
+            raise  ValueError("Invalid National Code value please enter integer type.")
 
         if self.next_handler:
             self.next_handler.handel(request)

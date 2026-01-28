@@ -1,0 +1,146 @@
+from ttkbootstrap import Frame,Label,Button,PhotoImage,Treeview,Entry
+from ttkbootstrap.dialogs import Messagebox
+from ttkbootstrap.style import LIGHT,INFO
+from Common.Decorators.performance_logger_decorator import PerformanceLogger
+
+
+class DeactivatedEmployeeFrame(Frame):
+    def __init__(self, window, manager, employee_business):
+        super().__init__(window)
+
+        self.employee_business = employee_business
+        self.manager = manager
+
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(3, weight=1)
+        self.grid_columnconfigure(4, weight=1)
+        self.grid_rowconfigure(2, weight=1)
+
+        self.grid_rowconfigure(3, weight=1)
+
+        self.header_label = Label(self, text="----------- Deactivated Manager Form -----------")
+        self.header_label.grid(row=0, column=0, columnspan=7, pady=10, padx=10)
+
+        self.arrow_image = PhotoImage(file=r"assets\image\icons8-arrow-30.png").subsample(2, 2)
+        self.arrow_butten = Button(self, image=self.arrow_image, command=self.arrow_butten_clicked, bootstyle=LIGHT)
+        self.arrow_butten.grid(row=0, column=0, padx=(5, 10), pady=10, sticky="w")
+
+        self.search_entry = Entry(self)
+        self.search_entry.grid(row=1, column=0, columnspan=5, pady=(0, 10), padx=10, sticky="ew")
+        self.search_entry.bind("<KeyRelease>", self.on_search_live)
+
+        self.search_button = Button(self, text="Search", command=self.search_clicked)
+        self.search_button.grid(row=1, column=5, pady=(0, 10), padx=(0, 10), sticky="w")
+
+        self.refresh = PhotoImage(file=r"assets\image\icons8-refresh-50-2.png").subsample(3, 3)
+        self.refresh_butten = Button(self, image=self.refresh, command=self.refresh_butten_clicked, bootstyle=LIGHT)
+        self.refresh_butten.grid(row=1, column=6, padx=(5, 10), pady=(10, 20), sticky="w")
+
+
+        self.deactivated_treeview = Treeview(self, columns=(
+            "first_name",
+            "last_name",
+            "national_code",
+            "username",
+            "status",
+            "deactivated_date"
+        ))
+        self.deactivated_treeview.grid(row=2, column=0, columnspan=7, padx=10, sticky="ewsn")
+        self.deactivated_treeview.column("#0", width=50)
+        self.deactivated_treeview.heading("#0", text="#")
+        self.deactivated_treeview.heading("#1", text="First Name")
+        self.deactivated_treeview.heading("#2", text="Last Name")
+        self.deactivated_treeview.heading("#3", text="National Code")
+        self.deactivated_treeview.heading("#4", text="User Name")
+        self.deactivated_treeview.heading("#5", text="Status")
+        self.deactivated_treeview.heading("#6", text="Deactivated Date")
+
+        self.deactivated_treeview.column("#0", width=50, stretch=False)
+
+        for col in self.deactivated_treeview["columns"]:
+            self.deactivated_treeview.column(col, width=120, anchor="center")
+
+        self.deactivated_treeview.bind("<Double-1>", self.doubel_clicked)
+
+        pagination_frame = Frame(self)
+        pagination_frame.grid(row=3, column=0, columnspan=7, pady=(0, 10))
+
+        self.previous_page_butten = Button(pagination_frame, text="<", command=self.load_previous_data_to_treeview,
+                                           bootstyle=INFO)
+        self.previous_page_butten.grid(row=0, column=0, padx=20)
+
+        self.current_page_label = Label(pagination_frame, text="1")
+        self.current_page_label.grid(row=0, column=1, padx=20)
+
+        self.next_page_butten = Button(pagination_frame, text=">", command=self.load_next_data_to_treeview,
+                                       bootstyle=INFO)
+        self.next_page_butten.grid(row=0, column=2, padx=20)
+
+    def arrow_butten_clicked(self):
+        self.search_entry.delete(0, "end")
+        self.manager.back()
+
+    def refresh_butten_clicked(self):
+        self.data_load_to_deactivated_treeview()
+
+    @PerformanceLogger
+    def data_load_to_deactivated_treeview(self, page_number=1, page_size=15):
+        self.page_size = page_size
+        term = self.search_entry.get().strip()
+        response = self.employee_business.get_deactivated_employee(page_number, page_size, term if term else None)
+
+        if response.success:
+            for row in self.deactivated_treeview.get_children():
+                self.deactivated_treeview.delete(row)
+
+            for index, employee in enumerate(response.data):
+                rownumber = (page_number - 1) * page_size + index + 1
+                self.deactivated_treeview.insert(
+                    "",
+                    "end",
+                    iid=employee.id,
+                    text=str(rownumber),
+                    values=(
+                        employee.firstname,
+                        employee.lastname,
+                        employee.national_code,
+                        employee.username,
+                        employee.status_id.name,
+                        employee.status_changed_date
+                    )
+
+                )
+        else:
+            Messagebox.show_error(response.message, "Failed!")
+
+    def doubel_clicked(self, event):
+        employee_id = self.deactivated_treeview.focus()
+        if not employee_id:
+            return
+        update_employee = self.manager.show_frame("update employee")
+        update_employee.set_entry(employee_id)
+        self.search_entry.delete(0,"end")
+
+
+    def load_next_data_to_treeview(self):
+        current_size = int(self.current_page_label.cget("text"))
+        next_page = current_size + 1
+        data = self.data_load_to_deactivated_treeview(next_page)
+        self.current_page_label.config(text=str(next_page))
+        if not data or len(data) < self.page_size:
+            self.next_page_butten.config(state="disabled")
+
+    def load_previous_data_to_treeview(self):
+        current_size = int(self.current_page_label.cget("text"))
+        previous_page = max(1, current_size - 1)
+        self.data_load_to_deactivated_treeview(previous_page)
+        self.current_page_label.config(text=str(previous_page))
+        self.next_page_butten.config(state="normal")
+
+    def search_clicked(self):
+        self.data_load_to_deactivated_treeview()
+
+    def on_search_live(self, event):
+        self.search_clicked()

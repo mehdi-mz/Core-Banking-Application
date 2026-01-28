@@ -3,13 +3,14 @@ from Common.entities.Enums.transaction_types import TransactionTypes
 
 
 class Transaction:
-    def __init__(self,id,account_number,old_balance,amount,transaction_type,user_name,transaction_time):
+    def __init__(self,id,account_number,old_balance,amount,transaction_type,user_name,card,transaction_time):
         self.id = id
         self.account_number = account_number
         self.old_balance = old_balance
         self.amount = amount
         self.transaction_type = TransactionTypes(transaction_type)
         self.user_name = user_name
+        self.card = card
         self.transaction_time = transaction_time
 
     @classmethod
@@ -21,5 +22,6 @@ class Transaction:
             dic_data.get("Amount"),
             dic_data.get("TransactionType"),
             dic_data.get("UserName"),
-            dic_data.get("TransactionTime"))
+            dic_data.get("card"),
+            dic_data.get("Transaction_Time"))
 

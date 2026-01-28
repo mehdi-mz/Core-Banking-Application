@@ -1,4 +1,4 @@
-from Presentation.view_manager import ViewManager
+from Presentation.Desktop.view_manager import ViewManager
 from BusinessLogic.employee_business_logic import EmployeeBusinessLogic
 # from DataAccess.Repositories.SQLite.employee_repository import SQLiteEmployeeRepository
 from DataAccess.Repositories.SQLServer.sql_server_employee_repository import SQLServerEmployeeRepository
@@ -20,11 +20,13 @@ employee_business_logic= EmployeeBusinessLogic(employee_repository)
 account_repository=SqlServerAccountRepository()
 account_business_logic = AccountBusinessLogic(account_repository)
 
-transaction_repository = SqlServerTransactionRepository()
-transaction_business_logic=TransactionBusinessLogic(transaction_repository,account_repository)
-
 customer_repository = SqlServerCustomerRepository()
 customer_business = CustomerBisinessLogic(customer_repository)
+
+transaction_repository = SqlServerTransactionRepository()
+transaction_business_logic=TransactionBusinessLogic(transaction_repository,account_repository,customer_repository)
+
+
 
 
 ViewManager(employee_business_logic,account_business_logic,transaction_business_logic,customer_business)

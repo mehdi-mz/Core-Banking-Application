@@ -59,13 +59,13 @@ class CustomerBisinessLogic:
         request = CreateCustomerRequest(first_name,last_name,national_code,phone_number,birth_date,gender)
 
         name_validator = NameValidator()
-        nationalcode_validator = NationalCodeValidator()
-        phonenumber_validator = PhoneNumberValidator()
+        national_code_validator = NationalCodeValidator()
+        phone_number_validator = PhoneNumberValidator()
         birthdate_validator = BirthDateValidator()
 
-        name_validator.set_next(nationalcode_validator)
-        nationalcode_validator.set_next(phonenumber_validator)
-        phonenumber_validator.set_next(birthdate_validator)
+        name_validator.set_next(national_code_validator)
+        national_code_validator.set_next(phone_number_validator)
+        phone_number_validator.set_next(birthdate_validator)
 
         try:
             name_validator.handel(request)
@@ -153,6 +153,36 @@ class CustomerBisinessLogic:
         except Exception as e:
             print(f"Exception in blocked_customer: {e}")
             return Response(False, "An internal error occurred while blocking the customer. ❌", None)
+
+    def activated_customer(self,customer_id):
+        try:
+            rows = self.customer_repository.activated_customer(customer_id)
+            if rows >= 1:
+                return Response(True,"Customer Activated successfully. ✅",None)
+            else:
+                return Response(False,"Customer not found or already Activated. ❌",None)
+
+        except Exception as e:
+            print(f"Exception in activated_customer: {e}")
+            return Response(False,"An internal error occurred while activating the customer. ❌",None)
+
+    def get_customer_by_account_number(self,account_number):
+        if  not account_number:
+            return Response(False,"Account Number cannot be empty.",None)
+
+
+        try:
+            customer = self.customer_repository.get_customer_by_account_number(account_number)
+
+            if customer:
+                return Response(True,"",customer)
+            else:
+                return Response(False,"invalid account number. ❌",None)
+
+        except Exception as e:
+            print(f"Exception in get_customer_by_account_number: {e}")
+            return Response(False, "Database error occurred ❌. Please try again later.", None)
+
 
 
 

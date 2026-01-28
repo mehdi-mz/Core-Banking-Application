@@ -3,6 +3,7 @@ from Common.Repositories.iemployee_repository import IEmployeeRepository
 from hashlib import md5
 import pymssql
 from Common.entities.Enums.employee_status import EmployeeStatus
+from Common.entities.Enums.employee_role import EmployeeRole
 
 from BusinessLogic.validators.create_employee.create_employee_request import CreateEmployeeRequest
 from BusinessLogic.validators.create_customer.name_validator import NameValidator
@@ -12,7 +13,7 @@ from BusinessLogic.validators.create_employee.username_validator import Username
 from BusinessLogic.validators.login_employee.password_validator import PasswordValidator
 from BusinessLogic.validators.login_employee.login_employee_request import LoginEmployeeRequest
 from BusinessLogic.validators.reset_password.confirm_password_validator import ConfirmPasswordValidator
-from BusinessLogic.validators.reset_password.reset_passwoed_request import ResetPasswoedRequest
+from BusinessLogic.validators.reset_password.reset_passwoed_request import ResetPasswordRequest
 
 class EmployeeBusinessLogic:
     def __init__(self,employee_repository:IEmployeeRepository):
@@ -47,7 +48,7 @@ class EmployeeBusinessLogic:
 
 
     def reset_password(self,employee_id,new_password,confirm_password,entry_captcha,data_captcha):
-        request = ResetPasswoedRequest(new_password,confirm_password)
+        request = ResetPasswordRequest(new_password,confirm_password)
 
         password_validator = PasswordValidator()
         confirm_password_validatoe = ConfirmPasswordValidator()
@@ -71,35 +72,39 @@ class EmployeeBusinessLogic:
 
 
 
-    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_nationalcode,
-                       new_email,new_status=None):
+    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_national_code,
+                       new_email,role_id,new_status=None):
 
-        request = CreateEmployeeRequest(new_firstname,new_lastname,new_username,new_nationalcode,new_email)
+        request = CreateEmployeeRequest(new_firstname,new_lastname,new_username,new_national_code,new_email)
 
         name_validator = NameValidator()
         username_validator = UsernameValidator()
-        nationalcode_validator = NationalCodeValidator()
+        national_code_validator = NationalCodeValidator()
         email_validator = EmailValidator()
 
         name_validator.set_next(username_validator)
-        username_validator.set_next(nationalcode_validator)
-        nationalcode_validator.set_next(email_validator)
+        username_validator.set_next(national_code_validator)
+        national_code_validator.set_next(email_validator)
 
         try:
             name_validator.handel(request)
         except ValueError as error :
             return Response(False,error.args[0],None)
 
+        try:
+            role_value = EmployeeRole[role_id].value
+        except KeyError:
+            return Response(False, "Invalid Employee Role value.", None)
 
         try:
             if new_status:
                 status_value = EmployeeStatus[new_status].value
                 update_data_employee=self.employee_repository.update_profile(employee_id,new_firstname,new_lastname,
-                                                                         new_username,new_nationalcode,new_email,status_value)
+                                                                         new_username,new_national_code,new_email,role_value,status_value)
             else:
                 update_data_employee = self.employee_repository.update_profile(employee_id, new_firstname, new_lastname,
-                                                                               new_username, new_nationalcode,
-                                                                               new_email)
+                                                                               new_username, new_national_code,
+                                                                               new_email,role_value)
             if update_data_employee == 1 :
                 return Response(True,"Information has been successfully updated. ✅",None)
             else:
@@ -148,12 +153,12 @@ class EmployeeBusinessLogic:
 
         name_validator = NameValidator()
         username_validator = UsernameValidator()
-        nationalcode_validator = NationalCodeValidator()
+        national_code_validator = NationalCodeValidator()
         email_validator = EmailValidator()
 
         name_validator.set_next(username_validator)
-        username_validator.set_next(nationalcode_validator)
-        nationalcode_validator.set_next(email_validator)
+        username_validator.set_next(national_code_validator)
+        national_code_validator.set_next(email_validator)
 
         try:
             name_validator.handel(request)

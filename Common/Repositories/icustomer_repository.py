@@ -31,3 +31,11 @@ class ICustomerRepository(ABC):
     @abstractmethod
     def deactivated_customer(self, customer_id):
         pass
+
+    @abstractmethod
+    def activated_customer(self, customer_id):
+        pass
+
+    @abstractmethod
+    def get_customer_by_account_number(self, account_number):
+        pass

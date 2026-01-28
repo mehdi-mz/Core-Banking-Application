@@ -53,7 +53,7 @@ class AccountBusinessLogic:
     def get_account_by_id(self,account_number):
         try:
             account = self.account_repository.get_account_by_id(account_number)
-            return Response(True,None,account)
+            return Response(True,"",account)
         except Exception as e :
             print(f"Exception in get_account_by_id: {e}")
             return Response(False,"Database error occurred ❌. Please try again later.", None)

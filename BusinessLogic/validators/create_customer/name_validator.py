@@ -8,7 +8,7 @@ class NameValidator(BaseHandler):
             raise ValueError("First Name cannot be empty.")
 
         if  not isinstance(request.first_name,str):
-            raise ValueError("Invalid value please enter string type.")
+            raise ValueError("Invalid First Name  value please enter string type.")
 
         if len(request.first_name) > 50:
             raise ValueError("First name value is out of valid range.")
@@ -18,7 +18,7 @@ class NameValidator(BaseHandler):
             raise ValueError("Last Name cannot be empty.")
 
         if not isinstance(request.last_name, str):
-            raise ValueError("Invalid value please enter string type.")
+            raise ValueError("Invalid Last Name  value please enter string type.")
 
         if len(request.last_name) > 50:
             raise ValueError("Last name value is out of valid range.")
