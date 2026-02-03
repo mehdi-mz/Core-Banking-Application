@@ -10,8 +10,6 @@ class BirthDateValidator(BaseHandler):
         if len(request.birth_date) != 10 :
             raise ValueError("The entered date is invalid ⚠️")
 
-        if not request.gender.strip() or not isinstance(request.gender,str):
-            raise ValueError("Gender cannot be empty.")
 
         if self.next_handler:
             self.next_handler.handel(request)

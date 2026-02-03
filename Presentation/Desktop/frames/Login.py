@@ -34,9 +34,6 @@ class LoginFrame(Frame):
         self.captcha_component=Captchacomponent(self)
         self.captcha_component.grid(row=4,column=1,padx=10,pady=(0,10),sticky="ew")
 
-        # self.remember_me_checkbutten=Checkbutton(self,text="Remember Me")
-        # self.remember_me_checkbutten.grid(row=5,column=1,pady=(0,10),sticky="w")
-
         self.butten_login=Button(self,text="Login",command=self.butten_login_clicked,bootstyle=SUCCESS)
         self.butten_login.grid(row=6,columnspan=2,column=0,pady=(0,10),padx=10,sticky="ew")
 

@@ -66,7 +66,7 @@ class ResetPasswordFrame(Frame):
             self.confirm_password_component.clear()
             self.captcha_component.clear_captcha()
             self.error_label.config(text="")
-            self.manager.show_frame("My Profile")
+            self.manager.back()
         else:
             self.error_label.config(text=response.message,bootstyle=DANGER)
             self.captcha_component.butten_refresh_clicked()

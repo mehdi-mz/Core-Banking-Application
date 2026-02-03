@@ -80,13 +80,14 @@ class DeactivatedEmployeeFrame(Frame):
 
     def arrow_butten_clicked(self):
         self.search_entry.delete(0, "end")
-        self.manager.back()
+        employee_management = self.manager.back()
+        employee_management.load_data_to_employee_management_treeview()
 
     def refresh_butten_clicked(self):
-        self.data_load_to_deactivated_treeview()
+        self.load_data_to_employee_management_treeview()
 
     @PerformanceLogger
-    def data_load_to_deactivated_treeview(self, page_number=1, page_size=15):
+    def load_data_to_employee_management_treeview(self, page_number=1, page_size=15):
         self.page_size = page_size
         term = self.search_entry.get().strip()
         response = self.employee_business.get_deactivated_employee(page_number, page_size, term if term else None)
@@ -127,7 +128,7 @@ class DeactivatedEmployeeFrame(Frame):
     def load_next_data_to_treeview(self):
         current_size = int(self.current_page_label.cget("text"))
         next_page = current_size + 1
-        data = self.data_load_to_deactivated_treeview(next_page)
+        data = self.load_data_to_employee_management_treeview(next_page)
         self.current_page_label.config(text=str(next_page))
         if not data or len(data) < self.page_size:
             self.next_page_butten.config(state="disabled")
@@ -135,12 +136,12 @@ class DeactivatedEmployeeFrame(Frame):
     def load_previous_data_to_treeview(self):
         current_size = int(self.current_page_label.cget("text"))
         previous_page = max(1, current_size - 1)
-        self.data_load_to_deactivated_treeview(previous_page)
+        self.load_data_to_employee_management_treeview(previous_page)
         self.current_page_label.config(text=str(previous_page))
         self.next_page_butten.config(state="normal")
 
     def search_clicked(self):
-        self.data_load_to_deactivated_treeview()
+        self.load_data_to_employee_management_treeview()
 
     def on_search_live(self, event):
         self.search_clicked()

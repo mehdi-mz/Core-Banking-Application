@@ -62,8 +62,17 @@ class UpdateAccountFrame(Frame):
 
 
     def save_update_account_button_clicked(self):
-        account_type = self.account_type.get()
-        account_status = self.account_status.get()
+        try:
+            account_type = AccountTypes[self.account_type.get().replace(" ","_")]
+        except KeyError:
+            Messagebox.show_error("Invalid Account Type value.","Error")
+            return
+
+        try:
+            account_status = AccountStatus[self.account_status.get()]
+        except KeyError:
+            Messagebox.show_error("Invalid Account Status value.","Error")
+            return
 
         response = self.account_business.update_account(self.account_number,account_type,account_status)
         if response.success:

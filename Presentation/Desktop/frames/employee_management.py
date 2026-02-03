@@ -182,7 +182,7 @@ class EmployeeManagmentFrame(Frame):
 
     def deactivated_employees_button_clicked(self):
         deactivated_employee = self.manager.show_frame("deactivated employee")
-        deactivated_employee.data_load_to_deactivated_treeview()
+        deactivated_employee.load_data_to_employee_management_treeview()
 
     def search_clicked(self):
         self.load_data_to_employee_management_treeview()

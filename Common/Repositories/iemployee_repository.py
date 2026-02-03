@@ -47,5 +47,13 @@ class IEmployeeRepository(ABC):
     def get_deactivated_employee(self, page_number=1, page_size=15, term=None):
         pass
 
+    @abstractmethod
+    def get_image_employee(self,employee_id):
+        pass
+
+    @abstractmethod
+    def update_image_employee(self,employee_id , image_bytes):
+        pass
+
 
 

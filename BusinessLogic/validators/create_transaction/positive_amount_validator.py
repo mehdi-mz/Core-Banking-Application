@@ -9,13 +9,6 @@ class PositiveAmountValidator(BaseHandler):
         if not request.transaction_type:
             raise ValueError("Transaction Type cannot be empty.")
 
-
-        # if not  request.transaction_amount.isdigit() :
-        #     raise ValueError("Invalid Amount value please enter integer type.")
-
-        if not request.transaction_type.strip() :
-            raise ValueError("Transaction Type cannot be empty.")
-
         if request.transaction_amount < 10000:
             raise ValueError("Invalid amount for new transaction.")
 

@@ -1,6 +1,7 @@
 from ttkbootstrap import Frame,Label,Entry,Button,PhotoImage
 from ttkbootstrap.style import DANGER,LIGHT,SUCCESS,INFO
 from ttkbootstrap.dialogs import Messagebox
+from Common.entities.Enums.transaction_types import TransactionTypes
 
 from Common.Decorators.performance_logger_decorator import PerformanceLogger
 
@@ -26,7 +27,7 @@ class TransferFromCard(Frame):
         self.card_to_card_butten = Button(self, text="Card to Card",bootstyle=INFO,state="disabled")
         self.card_to_card_butten.grid(row=1, column=1, pady=(0, 30), sticky="w")
 
-        self.employee_butten = Button(self, text="Employee",bootstyle=INFO, command=self.employee_butten_clicked)
+        self.employee_butten = Button(self, text="In-Branch",bootstyle=INFO, command=self.in_branch_butten_clicked)
         self.employee_butten.grid(row=1, column=0,padx=(10,0), pady=(0, 30), sticky="e")
 
         self.account_number_label = Label(self, text="Account Number")
@@ -91,10 +92,10 @@ class TransferFromCard(Frame):
 
     def ok_button_clicked(self):
         username = self.manager.current_user.username
-        transaction_type = "Card_To_Card_Out"
+        transaction_type = TransactionTypes.Card_To_Card_Out
         amount = float(self.amount.replace(",", ""))
 
-        response = self.transaction_business.card_to_card(amount,transaction_type,self.account_number,username,self.card)
+        response = self.transaction_business.create_transaction(amount,transaction_type,self.account_number,username,self.card)
 
         if response.success:
             self.manager.back()
@@ -111,7 +112,7 @@ class TransferFromCard(Frame):
         else:
             Messagebox.show_error(response.message,"Transaction Failed")
 
-    def employee_butten_clicked(self):
+    def in_branch_butten_clicked(self):
         self.manager.back()
         self.amount_entry.config(state="normal")
         self.account_number_entry.config(state="normal")

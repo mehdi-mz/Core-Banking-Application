@@ -2,6 +2,8 @@ from Common.DTOs.response import Response
 from Common.Repositories.iemployee_repository import IEmployeeRepository
 from hashlib import md5
 import pymssql
+import io
+from PIL import Image
 from Common.entities.Enums.employee_status import EmployeeStatus
 from Common.entities.Enums.employee_role import EmployeeRole
 
@@ -260,4 +262,34 @@ class EmployeeBusinessLogic:
             except Exception as e:
                 print(f"Exception in request_employee: {e}")
                 return Response(False, "Load Employee Request  List failed!", None)
+
+    def get_image_employee(self,employee_id):
+        try:
+            employee_image_bytes = self.employee_repository.get_image_employee(employee_id)
+            if not employee_image_bytes:
+                return Response(False,"Employee image not found.",None)
+            employee_image = Image.open(io.BytesIO(employee_image_bytes))
+            return Response(True,"",employee_image)
+        except Exception as e :
+            print(f"Exception in get_image_employee: {e}")
+            return Response(False, "Load Employee Image failed!", None)
+
+    def update_image_employee(self,employee_id,file_path):
+        if not file_path:
+            return Response(False, "No image selected!", None)
+        try:
+            with open(file_path,"rb") as file :
+                image_bytes = file.read()
+
+                result = self.employee_repository.update_image_employee(employee_id, image_bytes)
+                if result:
+                    return Response(True, "Employee image updated successfully ✅.", None)
+                else:
+                    return Response(False, "Image update failed ❌.", None)
+
+        except Exception as e :
+            print(f"Exception in update_image_employee: {e}")
+            return Response(False, "Load Employee Image failed!", None)
+
+
 

@@ -28,7 +28,7 @@ from Presentation.Desktop.frames.navbar import Navbar
 from BusinessLogic.employee_business_logic import EmployeeBusinessLogic
 from BusinessLogic.account_business_logic import AccountBusinessLogic
 from BusinessLogic.transaction_business_logic import TransactionBusinessLogic
-from BusinessLogic.customer_business_logic import CustomerBisinessLogic
+from BusinessLogic.customer_business_logic import CustomerBusinessLogic
 
 from Common.Decorators.performance_logger_decorator import PerformanceLogger
 
@@ -37,7 +37,7 @@ class ViewManager:
     def __init__(self,employee_business:EmployeeBusinessLogic,
                        account_business:AccountBusinessLogic,
                         transaction_business:TransactionBusinessLogic,
-                        customer_business : CustomerBisinessLogic
+                        customer_business : CustomerBusinessLogic
                  ):
         self.current_user=None
 
@@ -56,7 +56,7 @@ class ViewManager:
         self.add_frame("update account",UpdateAccountFrame(self.window,self,account_business),(700,500))
 
 
-        self.add_frame("My Profile",MyProfileFrame(self.window,self,employee_business),(650,590))
+        self.add_frame("My Profile",MyProfileFrame(self.window,self,employee_business),(650,600))
 
         self.add_frame("admin reset password",AdminResetEmployeePasswordFrame(self.window,self,employee_business),(450,400))
         self.add_frame("reset password",ResetPasswordFrame(self.window,self,employee_business),(450,380))
@@ -65,7 +65,7 @@ class ViewManager:
         self.add_frame("create customer",CreateCustomerFrame(self.window,self,customer_business,account_business),(950,700))
         self.add_frame("update customer",UpdateCustomerFrame(self.window,self,customer_business),(950,500))
 
-        self.add_frame("update employee",UpdateEmployeeFrame(self.window,self,employee_business),(650,500))
+        self.add_frame("update employee",UpdateEmployeeFrame(self.window,self,employee_business),(650,600))
         self.add_frame("request employee",RequestEmployeeFrame(self.window,self,employee_business),(1350,600))
         self.add_frame("reject employee", RejectEmployeeFrame(self.window, self, employee_business), (1360,600))
         self.add_frame("deactivated employee",DeactivatedEmployeeFrame(self.window,self,employee_business,),(1360,600))

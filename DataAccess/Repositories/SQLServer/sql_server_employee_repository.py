@@ -371,3 +371,38 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                     request = Employee.create_with_dict(row)
                     request_list.append(request)
         return request_list
+
+    def get_image_employee(self, employee_id):
+        with self.creat_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute("""       
+                        select image
+                        from staff.EmployeeImages
+                        where employee_id = %d""",(employee_id,))
+            row = cursor.fetchone()
+            if row:
+                return row[0]
+            return None
+
+    def update_image_employee(self, employee_id, image_bytes):
+        with self.creat_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM staff.EmployeeImages WHERE employee_id = %d", (employee_id,))
+            exists = cursor.fetchone()[0] > 0
+
+            if exists:
+                cursor.execute("""
+                       UPDATE staff.EmployeeImages
+                       SET image = %s
+                       WHERE employee_id = %d
+                   """, (image_bytes, employee_id))
+            else:
+                cursor.execute("""
+                                INSERT INTO staff.EmployeeImages(employee_id, image)
+                                VALUES (%d, %s)
+                            """, (employee_id, image_bytes))
+            connection.commit()
+            return cursor.rowcount > 0
+
+
+

@@ -2,7 +2,6 @@ from Common.Repositories.itransaction_repository import ITransactionRepository
 from Common.Repositories.iaccount_repository import IAccountRepository
 from Common.Repositories.icustomer_repository import ICustomerRepository
 from Common.DTOs.response import Response
-from Common.entities.Enums.transaction_types import TransactionTypes
 from Common.entities.transaction import Transaction
 from reportlab.platypus import SimpleDocTemplate, Paragraph,Image,Table,Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -60,10 +59,7 @@ class TransactionBusinessLogic:
                 print(f"Exception in name customer to pdf: {e}")
                 return Response(False, "name customer to pdf Failed!", None)
 
-            total_balance = sum(
-                [f.amount if f.transaction_type == TransactionTypes.Deposit
-                          else f.amount * -1
-                          for f in response.data])
+            total_balance = self.sum_balance(account_number)
             total_balance_format=f"{total_balance:,.2f}"
 
             elements = []
@@ -127,94 +123,84 @@ class TransactionBusinessLogic:
         else:
             return Response(False,"Export Pdf Transaction Failed!",None)
 
-    def create_transaction(self,amountt, transaction_type, account_number,username):
-        if not amountt:
-            return Response(False,"Amount cannot be empty.",None)
-        amount = float(amountt.replace(",", ""))
+    def create_transaction(self,amount, transaction_type, account_number,username,card=None):
 
-        account = self.account_repository.get_account_by_id(account_number)
-        balance = self.transaction_repository.sum_balance(account_number)
-        daily_transaction = self.transaction_repository.get_daily_transactions(account_number)
-        max_daily_transaction = sum(f.amount  for f in daily_transaction)
-        request = CreateTransactionRequest(account,amount,balance,transaction_type,max_daily_transaction)
+        if card:
+            account = self.account_repository.get_account_by_id(account_number)
+            account_card = self.account_repository.get_account_by_id(card)
+            balance = self.transaction_repository.sum_balance(account_number)
+            daily_transaction = self.transaction_repository.get_daily_transactions(account_number)
+            max_daily_transaction = sum(f.amount for f in daily_transaction)
+            request = CreateTransactionRequest(account, amount, balance, transaction_type, max_daily_transaction,
+                                               account_card)
 
-        positive_validator = PositiveAmountValidator()
-        account_validator = AccountStatusValidator()
-        balance_validator = BalanceValidator()
-        max_transaction = MaxTransactionValidator()
+            positive_validator = PositiveAmountValidator()
+            account_validator = AccountStatusValidator()
+            card_status_validator = CardStatusValidator()
+            balance_validator = BalanceValidator()
+            max_transaction = MaxTransactionValidator()
 
-        positive_validator.set_next(account_validator)
-        account_validator.set_next(balance_validator)
-        balance_validator.set_next(max_transaction)
+            positive_validator.set_next(account_validator)
+            account_validator.set_next(card_status_validator)
+            card_status_validator.set_next(balance_validator)
+            balance_validator.set_next(max_transaction)
 
-        try:
-            positive_validator.handel(request)
+            try:
+                positive_validator.handel(request)
 
-        except ValueError as error:
-            return  Response(False,error.args[0],None)
+            except ValueError as error:
+                return Response(False, error.args[0], None)
 
+            else:
+                transaction_type_value = transaction_type.value
+                try:
+                    old_balance = self.transaction_repository.sum_balance(account_number)
+                    old_balance_card = self.transaction_repository.sum_balance(card)
+                    new_transaction = Transaction(None, account_number, old_balance, amount, transaction_type_value,
+                                                  username, card, datetime.now())
+                    self.transaction_repository.card_to_card(new_transaction, old_balance_card)
+                    return Response(True, "", None)
+                except Exception as e:
+                    print(f"Exception in card to card: {e}")
+                    return Response(False, "Database Exception", None)
         else:
-            try:
-                transaction_type_value = TransactionTypes[transaction_type.replace(" ", "_")].value
-            except KeyError:
-                return Response(False, "Invalid Transaction Type value.", None)
+            account = self.account_repository.get_account_by_id(account_number)
+            balance = self.transaction_repository.sum_balance(account_number)
+            daily_transaction = self.transaction_repository.get_daily_transactions(account_number)
+            max_daily_transaction = sum(f.amount  for f in daily_transaction)
+            request = CreateTransactionRequest(account,amount,balance,transaction_type,max_daily_transaction)
+
+            positive_validator = PositiveAmountValidator()
+            account_validator = AccountStatusValidator()
+            balance_validator = BalanceValidator()
+            max_transaction = MaxTransactionValidator()
+
+            positive_validator.set_next(account_validator)
+            account_validator.set_next(balance_validator)
+            balance_validator.set_next(max_transaction)
 
             try:
-                old_balance = self.transaction_repository.sum_balance(account_number)
-                new_transaction = Transaction(None,account_number,old_balance,amount,
-                                              transaction_type_value,username,None,datetime.now())
-                self.transaction_repository.insert_transaction(new_transaction)
-                return Response(True,"",None)
-            except Exception as e :
-                print(f"Exception in create_transaction: {e}")
-                return Response(False,"Database Exception",None)
+                positive_validator.handel(request)
+
+            except ValueError as error:
+                return  Response(False,error.args[0],None)
+
+            else:
+                transaction_type_value = transaction_type.value
+                try:
+                    old_balance = self.transaction_repository.sum_balance(account_number)
+                    new_transaction = Transaction(None,account_number,old_balance,amount,
+                                                  transaction_type_value,username,None,datetime.now())
+                    self.transaction_repository.insert_transaction(new_transaction)
+                    return Response(True,"",None)
+                except Exception as e :
+                    print(f"Exception in create_transaction: {e}")
+                    return Response(False,"Database Exception",None)
 
     def sum_balance(self,account_number:int):
         balance = self.transaction_repository.sum_balance(account_number)
         return balance
 
-    def card_to_card(self,amount,transaction_type, account_number,username,card):
-
-        account = self.account_repository.get_account_by_id(account_number)
-        account_card = self.account_repository.get_account_by_id(card)
-        balance = self.transaction_repository.sum_balance(account_number)
-        daily_transaction = self.transaction_repository.get_daily_transactions(account_number)
-        max_daily_transaction = sum(f.amount for f in daily_transaction)
-        request = CreateTransactionRequest(account, amount, balance,transaction_type, max_daily_transaction,account_card)
-
-        positive_validator = PositiveAmountValidator()
-        account_validator = AccountStatusValidator()
-        card_status_validator = CardStatusValidator()
-        balance_validator = BalanceValidator()
-        max_transaction = MaxTransactionValidator()
-
-        positive_validator.set_next(account_validator)
-        account_validator.set_next(card_status_validator)
-        card_status_validator.set_next(balance_validator)
-        balance_validator.set_next(max_transaction)
-
-        try:
-            positive_validator.handel(request)
-
-        except ValueError as error:
-            return Response(False, error.args[0], None)
-
-        else:
-            try:
-                transaction_type_value = TransactionTypes[transaction_type].value
-            except KeyError:
-                return Response(False, "Invalid Transaction Type value.", None)
-
-            try:
-                old_balance = self.transaction_repository.sum_balance(account_number)
-                old_balance_card = self.transaction_repository.sum_balance(card)
-                new_transaction = Transaction(None, account_number, old_balance, amount, transaction_type_value,
-                                              username,card, datetime.now())
-                self.transaction_repository.card_to_card(new_transaction,old_balance_card)
-                return Response(True, "", None)
-            except Exception as e:
-                print(f"Exception in card to card: {e}")
-                return Response(False, "Database Exception", None)
 
 
 

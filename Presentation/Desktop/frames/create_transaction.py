@@ -2,6 +2,7 @@ from tkinter.ttk import Combobox
 from ttkbootstrap import Frame,Label,Entry,Button,PhotoImage
 from ttkbootstrap.style import LIGHT,INFO
 from ttkbootstrap.dialogs import Messagebox
+from Common.entities.Enums.transaction_types import TransactionTypes
 
 from Common.Decorators.performance_logger_decorator import PerformanceLogger
 
@@ -28,7 +29,7 @@ class CreateTransaction(Frame):
                                           ,bootstyle=INFO,command=self.card_to_card_butten_clicked)
         self.card_to_card_butten.grid(row=1,column=1,pady=(0,30),sticky="w")
 
-        self.employee_butten = Button(self, text="Employee",bootstyle=INFO,state="disabled")
+        self.employee_butten = Button(self, text="In-Branch",bootstyle=INFO,state="disabled")
         self.employee_butten.grid(row=1, column=0, pady=(0, 30),padx=(30,0), sticky="e")
 
         self.amount_label = Label(self, text="Amount")
@@ -55,8 +56,16 @@ class CreateTransaction(Frame):
 
     @PerformanceLogger
     def submit_transaction_button_clicked(self):
-        amount = self.amount_entry.get()
-        transaction_type = self.transaction_type_entry.get()
+        if not self.amount_entry.get():
+            return Messagebox.show_error("Amount cannot be empty.","Amount Error")
+
+        amount = float(self.amount_entry.get().replace(",", ""))
+
+        try:
+            transaction_type = TransactionTypes[self.transaction_type_entry.get()]
+        except KeyError:
+            Messagebox.show_error("Invalid Transaction Type!","Transaction Type Error")
+            return
 
         username = self.manager.current_user.username
 
@@ -88,6 +97,11 @@ class CreateTransaction(Frame):
     def card_to_card_butten_clicked(self):
         card_to_card = self.manager.show_frame("card to card")
         card_to_card.set_account_number(self.account_number)
+        self.amount_entry.delete(0, "end")
+        self.transaction_type_entry.config(state="normal")
+        self.transaction_type_entry.delete(0, "end")
+        self.transaction_type_entry.config(state="readonly")
+        self.error_label.config(text="")
 
 
     def set_account_number(self,account_number):

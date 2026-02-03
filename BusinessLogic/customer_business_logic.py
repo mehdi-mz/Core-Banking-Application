@@ -7,10 +7,12 @@ from BusinessLogic.validators.create_customer.birthdate_validator import BirthDa
 from BusinessLogic.validators.create_customer.name_validator import NameValidator
 from BusinessLogic.validators.create_customer.nationalcode_validator import NationalCodeValidator
 from BusinessLogic.validators.create_customer.phone_validator import PhoneNumberValidator
+from BusinessLogic.validators.create_customer.gender_validator import GenderValidator
+from BusinessLogic.validators.create_employee.email_validator import EmailValidator
 
 
 
-class CustomerBisinessLogic:
+class CustomerBusinessLogic:
     def __init__(self,customer_repository : ICustomerRepository):
         self.customer_repository = customer_repository
 
@@ -56,26 +58,29 @@ class CustomerBisinessLogic:
 
     def create_customer(self, first_name, last_name, national_code, phone_number, email, birth_date, gender):
 
-        request = CreateCustomerRequest(first_name,last_name,national_code,phone_number,birth_date,gender)
+        request = CreateCustomerRequest(first_name,last_name,national_code,phone_number,email,birth_date,gender)
 
         name_validator = NameValidator()
         national_code_validator = NationalCodeValidator()
         phone_number_validator = PhoneNumberValidator()
+        email_validator = EmailValidator()
         birthdate_validator = BirthDateValidator()
+        gender_validator = GenderValidator()
+
+
 
         name_validator.set_next(national_code_validator)
         national_code_validator.set_next(phone_number_validator)
-        phone_number_validator.set_next(birthdate_validator)
+        phone_number_validator.set_next(email_validator)
+        email_validator.set_next(birthdate_validator)
+        birthdate_validator.set_next(gender_validator)
 
         try:
             name_validator.handel(request)
         except ValueError as error :
             return Response(False,error.args[0],None)
 
-        try:
-            gender_value = Gender[gender].value
-        except KeyError:
-            return Response(False,"Invalid Gender value.",None)
+        gender_value = gender.value
         try:
             row= self.customer_repository.create_customer(first_name,last_name
                                                                 ,national_code,phone_number,email,birth_date,gender_value)
@@ -97,16 +102,18 @@ class CustomerBisinessLogic:
 
     def update_customer(self,customer_id,firstname,lastname,national_code,phon_number,email,birth_date,gender):
 
-        request = CreateCustomerRequest(firstname,lastname,national_code,phon_number,birth_date,gender)
+        request = CreateCustomerRequest(firstname,lastname,national_code,phon_number,email,birth_date,gender)
 
         name_validator = NameValidator()
-        nationalcode_validator = NationalCodeValidator()
-        phonenumber_validator = PhoneNumberValidator()
+        national_code_validator = NationalCodeValidator()
+        phone_number_validator = PhoneNumberValidator()
+        email_validator = EmailValidator()
         birthdate_validator = BirthDateValidator()
 
-        name_validator.set_next(nationalcode_validator)
-        nationalcode_validator.set_next(phonenumber_validator)
-        phonenumber_validator.set_next(birthdate_validator)
+        name_validator.set_next(national_code_validator)
+        national_code_validator.set_next(phone_number_validator)
+        phone_number_validator.set_next(email_validator)
+        email_validator.set_next(birthdate_validator)
 
         try:
             name_validator.handel(request)

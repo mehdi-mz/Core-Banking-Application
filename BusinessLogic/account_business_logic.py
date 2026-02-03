@@ -1,7 +1,6 @@
 from Common.Repositories.iaccount_repository import IAccountRepository
 from Common.DTOs.response import Response
-from Common.entities.Enums.account_status import AccountStatus
-from Common.entities.Enums.account_types import AccountTypes
+
 
 class AccountBusinessLogic:
     def __init__(self,account_repository:IAccountRepository):
@@ -26,17 +25,8 @@ class AccountBusinessLogic:
                 return Response(False, "Load Account List failed!", None)
 
     def create_account(self,national_code, status,typee):
-
-        try:
-            type_value = AccountTypes[typee.replace(" ", "_")].value
-        except KeyError:
-            return Response(False, "Invalid Account Type value.", None)
-
-        try:
-            status_value = AccountStatus[status].value
-        except KeyError:
-            return Response(False, "Invalid Account Status value.", None)
-
+        type_value = typee.value
+        status_value = status.value
 
         try:
             row = self.account_repository.create_account(national_code,status_value,type_value)
@@ -59,16 +49,8 @@ class AccountBusinessLogic:
             return Response(False,"Database error occurred ❌. Please try again later.", None)
 
     def update_account(self,account_number,account_type,account_status):
-
-        try:
-            account_type_value = AccountTypes[account_type.replace(" ","_")].value
-        except KeyError:
-            return Response(False, "Invalid Account Type value.", None)
-
-        try:
-            account_status_value = AccountStatus[account_status].value
-        except KeyError:
-            return Response(False, "Invalid Account Status value.", None)
+        account_type_value =account_type.value
+        account_status_value = account_status.value
 
         try:
             row = self.account_repository.update_account(account_number,account_type_value,account_status_value)

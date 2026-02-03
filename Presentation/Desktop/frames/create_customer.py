@@ -98,7 +98,7 @@ class CreateCustomerFrame(Frame):
         national_code=self.entry_nationalcode.get()
         email=self.entry_email.get()
         brith_date=self.entry_brithdate.get()
-        gender = self.entry_gender.get()
+        gender = Gender[self.entry_gender.get()]
 
         response = self.customer_bisiness.create_customer(firstname,lastname,national_code,phon_number,email,brith_date,gender)
         if response.success:
@@ -112,9 +112,20 @@ class CreateCustomerFrame(Frame):
             self.error_customer.config(text=response.message,bootstyle=DANGER)
 
     def butten_ok_clicked(self):
+
         national_code = self.entry_nationalcode.get()
-        account_type = self.account_type.get()
-        account_status = self.account_status.get()
+        try:
+            account_type = AccountTypes[self.account_type.get().replace(" ", "_")]
+        except KeyError:
+            Messagebox.show_error("Invalid Account Type value.","Error")
+            return
+
+        try:
+            account_status = AccountStatus[self.account_status.get()]
+        except KeyError:
+            Messagebox.show_error("Invalid Account Status value.","Error")
+            return
+
         response = self.account_business.create_account(national_code,account_status,account_type)
         if response.success:
             Messagebox.show_info(response.message,"Success")
