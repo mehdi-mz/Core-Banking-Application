@@ -93,7 +93,11 @@ class UpdateEmployeeFrame(Frame):
         new_national_code=self.entry_national_code.get()
         new_email=self.entry_email.get()
         new_status = self.entry_status.get()
-        new_role = self.entry_employee_role.get()
+        try:
+            new_role = EmployeeRole[self.entry_employee_role.get()]
+        except KeyError:
+            self.error_label.config(text="Invalid Employee Role value.",bootstyle=DANGER)
+            return
         update_employee = self.employee_business.update_profile(self.employee_id,new_firstname,new_lastname,new_username
                                                                 ,new_national_code,new_email,new_role,new_status)
         if update_employee.success:

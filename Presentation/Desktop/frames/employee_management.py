@@ -174,7 +174,7 @@ class EmployeeManagmentFrame(Frame):
     def request_button_clicked(self):
 
         request_employee= self.manager.show_frame("request employee")
-        request_employee.data_load_to_request_treeview()
+        request_employee.data_load_to_treeview()
 
 
     def create_employee_clicked(self):

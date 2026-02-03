@@ -98,7 +98,11 @@ class CreateCustomerFrame(Frame):
         national_code=self.entry_nationalcode.get()
         email=self.entry_email.get()
         brith_date=self.entry_brithdate.get()
-        gender = Gender[self.entry_gender.get()]
+        try:
+            gender = Gender[self.entry_gender.get()]
+        except KeyError:
+            self.error_customer.config(text="Invalid Gender value.",bootstyle=DANGER)
+            return
 
         response = self.customer_bisiness.create_customer(firstname,lastname,national_code,phon_number,email,brith_date,gender)
         if response.success:

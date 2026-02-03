@@ -93,10 +93,8 @@ class EmployeeBusinessLogic:
         except ValueError as error :
             return Response(False,error.args[0],None)
 
-        try:
-            role_value = EmployeeRole[role_id].value
-        except KeyError:
-            return Response(False, "Invalid Employee Role value.", None)
+        role_value = role_id.value
+
 
         try:
             if new_status:

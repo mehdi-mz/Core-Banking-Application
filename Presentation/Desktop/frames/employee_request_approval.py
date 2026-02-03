@@ -50,10 +50,10 @@ class EmployeeRequestApprovalFrame(Frame):
         self.entry_username = Entry(self)
         self.entry_username.grid(row=3, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_nationalcode = Label(self, text="National Code")
-        self.label_nationalcode.grid(row=4, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_nationalcode = Entry(self)
-        self.entry_nationalcode.grid(row=4, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
+        self.label_national_code = Label(self, text="National Code")
+        self.label_national_code.grid(row=4, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_national_code = Entry(self)
+        self.entry_national_code.grid(row=4, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
         self.label_email = Label(self, text="Email")
         self.label_email.grid(row=5, column=0, padx=10, pady=(0, 10), sticky="e")
@@ -65,10 +65,10 @@ class EmployeeRequestApprovalFrame(Frame):
         self.entry_status = Entry(self,state="readonly")
         self.entry_status.grid(row=6, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_employeerole = Label(self, text="Employee Role")
-        self.label_employeerole.grid(row=7, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_employeerole = Entry(self,state="readonly")
-        self.entry_employeerole.grid(row=7, column=1,columnspan=4, padx=(0, 10), sticky="ew")
+        self.label_employee_role = Label(self, text="Employee Role")
+        self.label_employee_role.grid(row=7, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_employee_role = Entry(self,state="readonly")
+        self.entry_employee_role.grid(row=7, column=1,columnspan=4, padx=(0, 10), sticky="ew")
 
         self.error_label=Label(self)
         self.error_label.grid(row=8,column=0,columnspan=5,pady=10)
@@ -82,10 +82,16 @@ class EmployeeRequestApprovalFrame(Frame):
         new_firstname=self.entry_firstname.get()
         new_lastname=self.entry_lastname.get()
         new_username=self.entry_username.get()
-        new_nationalcode=self.entry_nationalcode.get()
+        new_national_code=self.entry_national_code.get()
         new_email=self.entry_email.get()
+        try:
+            role_id = EmployeeRole[self.entry_employee_role.get()]
+        except KeyError:
+            self.error_label.config(text="Invalid Employee Role value.",bootstyle=DANGER)
+            return
+
         update_employee = self.employee_business.update_profile(self.employee_id,new_firstname,new_lastname,
-                                                                new_username,new_nationalcode,new_email,None,None)
+                                                                new_username,new_national_code,new_email,role_id,None)
         if update_employee.success:
             Messagebox.show_info(update_employee.message,"Success")
             self.error_label.config(text="")
@@ -104,7 +110,7 @@ class EmployeeRequestApprovalFrame(Frame):
         self.entry_firstname.delete(0, "end")
         self.entry_lastname.delete(0, "end")
         self.entry_username.delete(0, "end")
-        self.entry_nationalcode.delete(0, "end")
+        self.entry_national_code.delete(0, "end")
         self.entry_email.delete(0, "end")
 
         response = self.employee_business.get_employee_by_id(employee_id)
@@ -113,7 +119,7 @@ class EmployeeRequestApprovalFrame(Frame):
             self.entry_firstname.insert(0,employee.firstname)
             self.entry_lastname.insert(0, employee.lastname)
             self.entry_username.insert(0, employee.username)
-            self.entry_nationalcode.insert(0, employee.national_code)
+            self.entry_national_code.insert(0, employee.national_code)
             self.entry_email.insert(0, employee.email)
 
             self.entry_status.config(state="normal")
@@ -128,20 +134,20 @@ class EmployeeRequestApprovalFrame(Frame):
                 self.reject_button.config(state="disabled")
             self.entry_status.config(state="readonly")
 
-            self.entry_employeerole.config(state="normal")
-            self.entry_employeerole.delete(0, "end")
+            self.entry_employee_role.config(state="normal")
+            self.entry_employee_role.delete(0, "end")
             if employee.role_id == EmployeeRole.Admin:
-                self.entry_employeerole.insert(0,"Admin")
+                self.entry_employee_role.insert(0,"Admin")
             elif employee.role_id == EmployeeRole.Banker:
-                self.entry_employeerole.insert(0, "Banker")
-            self.entry_employeerole.config(state="readonly")
+                self.entry_employee_role.insert(0, "Banker")
+            self.entry_employee_role.config(state="readonly")
 
     def accept_employee(self):
         response = self.employee_business.accept_employee(self.employee_id)
         if response.success:
             Messagebox.show_info(response.message,"success ✅")
             request_employee = self.manager.back()
-            request_employee.data_load_to_request_treeview()
+            request_employee.data_load_to_treeview()
         else:
             Messagebox.show_error(response.message,"error ❌")
 
@@ -150,6 +156,6 @@ class EmployeeRequestApprovalFrame(Frame):
         if response.success:
             Messagebox.show_info(response.message, "success ✅")
             request_employee = self.manager.back()
-            request_employee.data_load_to_request_treeview()
+            request_employee.data_load_to_treeview()
         else:
             Messagebox.show_error(response.message, "error ❌")
