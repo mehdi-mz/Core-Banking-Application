@@ -11,7 +11,7 @@ class ApplicationWindow(Window):
         self.title("Core Banking Application")
 
 
-    def resaiz(self,width,height):
+    def resize(self,width,height):
         self.update_idletasks()
 
         screen_width = self.winfo_screenwidth()

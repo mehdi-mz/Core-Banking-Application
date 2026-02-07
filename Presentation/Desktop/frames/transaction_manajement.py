@@ -7,7 +7,7 @@ import tkinter.font as tkFont
 
 
 
-class TransactionManajementFrame(Frame):
+class TransactionManagementFrame(Frame):
     def __init__(self,window,manager,transaction_business):
         super().__init__(window)
 
@@ -53,7 +53,7 @@ class TransactionManajementFrame(Frame):
                                                          "transaction_type",
                                                          "update_time"
                                                          ))
-        self.transaction_treeview.grid(row=3,column=0,columnspan=2,pady=(0,10),padx=10,sticky="snew")
+        self.transaction_treeview.grid(row=3,column=0,columnspan=2,pady=(0,10),padx=10,sticky="nsew")
         self.transaction_treeview.column("#0",width=50)
         self.transaction_treeview.heading("#0",text="#")
         self.transaction_treeview.heading("#1",text="Balance before transaction")
@@ -66,7 +66,7 @@ class TransactionManajementFrame(Frame):
         for col in self.transaction_treeview["columns"]:
             self.transaction_treeview.column(col, width=120, anchor="center")
 
-        self.acount_number = None
+        self.account_number = None
 
 
         pagination_frame = Frame(self)
@@ -93,11 +93,11 @@ class TransactionManajementFrame(Frame):
             self.next_page_butten.config(state="normal")
 
         self.page_size = page_size
-        self.acount_number = account_number
+        self.account_number = account_number
 
         response= self.transaction_business.get_transaction_list(account_number,page_number,page_size)
 
-        self.label_account_number.config(text=f"Account Number: {self.acount_number}")
+        self.label_account_number.config(text=f"Account Number: {self.account_number}")
 
 
         if response.success:
@@ -109,12 +109,12 @@ class TransactionManajementFrame(Frame):
                 self.transaction_treeview.delete(row)
 
             for index,transaction in enumerate(response.data):
-                rownumber = (page_number - 1) * page_size + index + 1
+                row_number = (page_number - 1) * page_size + index + 1
                 self.transaction_treeview.insert(
                     "",
                     "end",
                     iid=transaction.id,
-                    text=str(rownumber),
+                    text=str(row_number),
                     values=(
                         f"{transaction.old_balance:,.2f}",
                         f"{transaction.amount:,.2f}",
@@ -123,30 +123,32 @@ class TransactionManajementFrame(Frame):
                     )
 
                 )
+            return response.data
+
         else:
-            Messagebox.show_error("Transaction Failed!",response.message)
+            return Messagebox.show_error("Transaction Failed!",response.message)
 
     @PerformanceLogger
     def export_pdf_transaction_button_clicked(self):
         file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.PDF",)]
                                                  , title="Save as Transaction Report")
         if file_path:
-            response = self.transaction_business.export_pdf_transaction(self.acount_number,file_path)
+            response = self.transaction_business.export_pdf_transaction(self.account_number,file_path)
             if not  response.success :
-                Messagebox.show_error(response.message,"erorr")
+                Messagebox.show_error(response.message,"Error")
 
 
     @PerformanceLogger
     def create_transaction_button_clicked(self):
-        create_transaction = self.manager.show_frame("create transation")
-        create_transaction.set_account_number(self.acount_number)
+        create_transaction = self.manager.show_frame("create transaction")
+        create_transaction.set_account_number(self.account_number)
 
 
 
     def load_next_data_to_treeview(self):
         current_size=int(self.current_page_label.cget("text"))
         next_page=current_size+1
-        data = self.data_load_to_transaction_treeview(self.acount_number,next_page)
+        data = self.data_load_to_transaction_treeview(self.account_number,next_page)
         self.current_page_label.config(text=str(next_page))
         if not data  or len(data) < self.page_size :
             self.next_page_butten.config(state="disabled")
@@ -154,6 +156,6 @@ class TransactionManajementFrame(Frame):
     def load_previous_data_to_treeview(self):
         current_size=int(self.current_page_label.cget("text"))
         previous_page=max(1,current_size-1)
-        self.data_load_to_transaction_treeview(self.acount_number,previous_page)
+        self.data_load_to_transaction_treeview(self.account_number,previous_page)
         self.current_page_label.config(text=str(previous_page))
         self.next_page_butten.config(state="normal")

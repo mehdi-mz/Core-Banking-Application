@@ -5,8 +5,8 @@ class AccountStatusValidator(BaseHandler):
 
 
     def handel(self, request):
-        if request.account.account_status == AccountStatus.Deactive:
-            raise ValueError("Account is Deactive. Cannot create a transaction. ❌")
+        if request.account.account_status == AccountStatus.Deactivate:
+            raise ValueError("Account is Deactivate. Cannot create a transaction. ❌")
 
         if request.account.account_status == AccountStatus.Block:
             raise ValueError("Account is Blocked. Cannot create a transaction. ❌")

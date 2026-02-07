@@ -101,7 +101,8 @@ class EmployeeRequestApprovalFrame(Frame):
 
 
     def butten_arrow_clicked(self):
-            self.manager.back()
+            load_employee = self.manager.back()
+            load_employee.data_load_to_treeview()
             self.error_label.config(text="")
 
     @PerformanceLogger

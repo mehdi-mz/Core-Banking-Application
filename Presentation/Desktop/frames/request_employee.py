@@ -54,7 +54,7 @@ class RequestEmployeeFrame(Frame):
                                                          "status",
                                                           "request_date"
                                                          ))
-        self.request_treeview.grid(row=2,column=0,columnspan=6,padx=10,sticky="ewsn")
+        self.request_treeview.grid(row=2,column=0,columnspan=6,padx=10,sticky="nsew")
         self.request_treeview.column("#0",width=50)
         self.request_treeview.heading("#0",text="#")
         self.request_treeview.heading("#1",text="First Name")
@@ -69,7 +69,7 @@ class RequestEmployeeFrame(Frame):
         for col in self.request_treeview["columns"]:
             self.request_treeview.column(col, width=120, anchor="center")
 
-        self.request_treeview.bind("<Double-1>",self.doubel_clicked)
+        self.request_treeview.bind("<Double-1>",self.double_clicked)
 
         self.reject_butten = Button(self, text="Rejected Employees",command=self.reject_butten_clicked)
         self.reject_butten.grid(row=3,column=5,padx=10,sticky="e")
@@ -107,12 +107,12 @@ class RequestEmployeeFrame(Frame):
                 self.request_treeview.delete(row)
 
             for index,employee in enumerate(response.data):
-                rownumber=(page_number-1)*page_size+index+1
+                row_number=(page_number-1)*page_size+index+1
                 self.request_treeview.insert(
                     "",
                     "end",
                     iid=employee.id,
-                    text=str(rownumber),
+                    text=str(row_number),
                     values=(
                         employee.firstname,
                         employee.lastname,
@@ -123,11 +123,12 @@ class RequestEmployeeFrame(Frame):
                     )
 
                 )
+            return response.data
         else:
-            Messagebox.show_error(response.message,"Failed!")
+            return Messagebox.show_error(response.message,"Failed!")
 
 
-    def doubel_clicked(self,event):
+    def double_clicked(self,event):
         employee_id = self.request_treeview.focus()
         if not employee_id:
             return

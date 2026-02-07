@@ -7,11 +7,11 @@ from Common.entities.Enums.account_status import AccountStatus
 from Common.entities.Enums.gender import Gender
 
 class CreateCustomerFrame(Frame):
-    def __init__(self,window,manager,customer_bisiness,account_business):
+    def __init__(self,window,manager,customer_business,account_business):
         super().__init__(window)
 
         self.manager=manager
-        self.customer_bisiness =customer_bisiness
+        self.customer_business =customer_business
         self.account_business = account_business
 
 
@@ -37,10 +37,10 @@ class CreateCustomerFrame(Frame):
         self.entry_lastname = Entry(self)
         self.entry_lastname.grid(row=1, column=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_nationalcode = Label(self, text="National Code")
-        self.label_nationalcode.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_nationalcode = Entry(self)
-        self.entry_nationalcode.grid(row=2, column=1, columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
+        self.label_national_code = Label(self, text="National Code")
+        self.label_national_code.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_national_code = Entry(self)
+        self.entry_national_code.grid(row=2, column=1, columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
         self.label_phon = Label(self, text="Phon Number")
         self.label_phon.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="e")
@@ -52,10 +52,10 @@ class CreateCustomerFrame(Frame):
         self.entry_email = Entry(self)
         self.entry_email.grid(row=4, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_brithdate = Label(self, text="Brith Date")
-        self.label_brithdate.grid(row=5, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_brithdate = Entry(self)
-        self.entry_brithdate.grid(row=5, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
+        self.label_brith_date = Label(self, text="Brith Date")
+        self.label_brith_date.grid(row=5, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_brith_date = Entry(self)
+        self.entry_brith_date.grid(row=5, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
 
 
@@ -70,8 +70,8 @@ class CreateCustomerFrame(Frame):
         self.butten_save=Button(self,text="Save ✔",command=self.save_button_clicked,bootstyle=SUCCESS)
         self.butten_save.grid(row=9,column=0,columnspan=5,pady=(5,25))
 
-        self.header_create_accounte =Label(self,text="----------------------- Create Account -----------------------")
-        self.header_create_accounte.grid(row=10,columnspan=5,column=0,padx=10,pady=(10,25))
+        self.header_create_account =Label(self,text="----------------------- Create Account -----------------------")
+        self.header_create_account.grid(row=10,columnspan=5,column=0,padx=10,pady=(10,25))
 
         self.label_type = Label(self, text="Account Type")
         self.label_type.grid(row=11, column=0, pady=(0, 10), padx=10, sticky="e")
@@ -95,16 +95,16 @@ class CreateCustomerFrame(Frame):
         firstname=self.entry_firstname.get()
         lastname=self.entry_lastname.get()
         phon_number=self.entry_phon.get()
-        national_code=self.entry_nationalcode.get()
+        national_code=self.entry_national_code.get()
         email=self.entry_email.get()
-        brith_date=self.entry_brithdate.get()
+        brith_date=self.entry_brith_date.get()
         try:
             gender = Gender[self.entry_gender.get()]
         except KeyError:
             self.error_customer.config(text="Invalid Gender value.",bootstyle=DANGER)
             return
 
-        response = self.customer_bisiness.create_customer(firstname,lastname,national_code,phon_number,email,brith_date,gender)
+        response = self.customer_business.create_customer(firstname,lastname,national_code,phon_number,email,brith_date,gender)
         if response.success:
             Messagebox.show_info(response.message,"Success")
             self.error_customer.config(text="")
@@ -117,7 +117,7 @@ class CreateCustomerFrame(Frame):
 
     def butten_ok_clicked(self):
 
-        national_code = self.entry_nationalcode.get()
+        national_code = self.entry_national_code.get()
         try:
             account_type = AccountTypes[self.account_type.get().replace(" ", "_")]
         except KeyError:
@@ -160,8 +160,8 @@ class CreateCustomerFrame(Frame):
             self.entry_lastname.delete(0,"end")
             self.entry_lastname.insert(0,customer.lastname)
 
-            self.entry_nationalcode.delete(0, "end")
-            self.entry_nationalcode.insert(0, customer.national_code)
+            self.entry_national_code.delete(0, "end")
+            self.entry_national_code.insert(0, customer.national_code)
 
             self.entry_phon.delete(0,"end")
             self.entry_phon.insert(0,customer.phon_number)
@@ -169,8 +169,8 @@ class CreateCustomerFrame(Frame):
             self.entry_email.delete(0,"end")
             self.entry_email.insert(0,customer.email)
 
-            self.entry_brithdate.delete(0,"end")
-            self.entry_brithdate.insert(0,customer.birth_date)
+            self.entry_brith_date.delete(0,"end")
+            self.entry_brith_date.insert(0,customer.birth_date)
 
             self.entry_gender.config(state="normal")
             self.entry_gender.delete(0,"end")
@@ -185,15 +185,15 @@ class CreateCustomerFrame(Frame):
             self.entry_firstname.delete(0,"end")
             self.entry_lastname.config(state="normal")
             self.entry_lastname.delete(0, "end")
-            self.entry_nationalcode.config(state="normal")
-            self.entry_nationalcode.delete(0, "end")
+            self.entry_national_code.config(state="normal")
+            self.entry_national_code.delete(0, "end")
             self.entry_phon.config(state="normal")
             self.entry_phon.delete(0, "end")
             self.entry_email.config(state="normal")
             self.entry_email.delete(0, "end")
-            self.entry_brithdate.config(state="normal")
-            self.entry_brithdate.delete(0,"end")
-            self.entry_brithdate.insert(0, "1900-01-01")
+            self.entry_brith_date.config(state="normal")
+            self.entry_brith_date.delete(0,"end")
+            self.entry_brith_date.insert(0, "1900-01-01")
             self.entry_gender.config(state="normal")
             self.entry_gender.delete(0, "end")
             self.entry_gender.config(state="readonly")

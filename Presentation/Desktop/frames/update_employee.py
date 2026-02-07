@@ -67,7 +67,7 @@ class UpdateEmployeeFrame(Frame):
 
         self.label_status = Label(self, text="Employee Status")
         self.label_status.grid(row=6, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_status = Combobox(self,values=["Active","Deactive"],state="readonly")
+        self.entry_status = Combobox(self,values=["Active","Deactivate"],state="readonly")
         self.entry_status.grid(row=6, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
         self.label_employee_role = Label(self, text="Employee Role")
@@ -150,8 +150,8 @@ class UpdateEmployeeFrame(Frame):
             if response.data.status_id == EmployeeStatus.Active:
                 self.entry_status.insert(0,"Active")
                 self.entry_status.config(bootstyle=SUCCESS)
-            elif response.data.status_id == EmployeeStatus.Deactive:
-                self.entry_status.insert(0, "Deactive")
+            elif response.data.status_id == EmployeeStatus.Deactivate:
+                self.entry_status.insert(0, "Deactivate")
                 self.entry_status.config(bootstyle=DANGER)
             self.entry_status.config(state="readonly")
             self.entry_employee_role.config(state="normal")

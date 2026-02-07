@@ -28,8 +28,8 @@ class LoginFrame(Frame):
         self.password_component = PasswordComponent(self)
         self.password_component.grid(row=2,column=1, padx=(0, 10), pady=(0, 10),sticky="ew")
 
-        self.erorr_label = Label(self)
-        self.erorr_label.grid(row=3, column=1, pady=(0, 10), padx=10)
+        self.error_label = Label(self)
+        self.error_label.grid(row=3, column=1, pady=(0, 10), padx=10)
 
         self.captcha_component=Captchacomponent(self)
         self.captcha_component.grid(row=4,column=1,padx=10,pady=(0,10),sticky="ew")
@@ -55,7 +55,7 @@ class LoginFrame(Frame):
         username=self.username_entry.get()
         password=self.password_component.get_password_value()
         response = self.employee_business.login(username,password,entry_data_captcha,data_captcha)
-        self.erorr_label.config(text="")
+        self.error_label.config(text="")
 
         if response.success:
             employee = self.manager.current_user=response.data
@@ -72,5 +72,5 @@ class LoginFrame(Frame):
                 self.password_component.clear()
                 self.captcha_component.clear_captcha()
         else:
-            self.erorr_label.config(text=response.message,bootstyle=DANGER)
+            self.error_label.config(text=response.message,bootstyle=DANGER)
             self.captcha_component.butten_refresh_clicked()

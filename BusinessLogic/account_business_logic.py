@@ -19,7 +19,7 @@ class AccountBusinessLogic:
         else:
             try:
                 account_list = self.account_repository.get_account(page_number, page_size)
-                return Response(True,None,account_list)
+                return Response(True,"",account_list)
             except Exception as e :
                 print(f"Exception in get_account_list: {e}")
                 return Response(False, "Load Account List failed!", None)

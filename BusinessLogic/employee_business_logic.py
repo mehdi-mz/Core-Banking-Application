@@ -5,8 +5,6 @@ import pymssql
 import io
 from PIL import Image
 from Common.entities.Enums.employee_status import EmployeeStatus
-from Common.entities.Enums.employee_role import EmployeeRole
-
 from BusinessLogic.validators.create_employee.create_employee_request import CreateEmployeeRequest
 from BusinessLogic.validators.create_customer.name_validator import NameValidator
 from BusinessLogic.validators.create_customer.nationalcode_validator import NationalCodeValidator
@@ -36,16 +34,16 @@ class EmployeeBusinessLogic:
         if entry_captcha != data_captcha:
             return Response(False,"Please enter the captcha correctly.",None)
 
-        pssword_hash = md5(password.encode()).hexdigest()
-        employee = self.employee_repository.get_by_username_password(username,pssword_hash)
+        password_hash = md5(password.encode()).hexdigest()
+        employee = self.employee_repository.get_by_username_password(username,password_hash)
 
         if employee:
             if employee.status_id != EmployeeStatus.Active:
-                return Response(False,"invalid usernamaeee or password !",None)
+                return Response(False,"invalid username or password !",None)
             else:
-                return Response(True,f"welcom {employee.full_name()}",employee)
+                return Response(True,f"Welcome {employee.full_name()}",employee)
         else:
-            return Response(False,"invalid usernamae or password !",None)
+            return Response(False,"invalid username or password !",None)
 
 
 
@@ -53,8 +51,8 @@ class EmployeeBusinessLogic:
         request = ResetPasswordRequest(new_password,confirm_password)
 
         password_validator = PasswordValidator()
-        confirm_password_validatoe = ConfirmPasswordValidator()
-        password_validator.set_next(confirm_password_validatoe)
+        confirm_password_validator = ConfirmPasswordValidator()
+        password_validator.set_next(confirm_password_validator)
         try:
             password_validator.handel(request)
         except ValueError as error :
@@ -205,7 +203,7 @@ class EmployeeBusinessLogic:
             return Response(True,"",employee)
         except Exception as e:
             print(f"Exception in get_employee_by_id: {e}")
-            Response(False," data failed",None)
+            return Response(False," data failed",None)
 
     def accept_employee(self,employee_id):
         try:
@@ -265,7 +263,7 @@ class EmployeeBusinessLogic:
         try:
             employee_image_bytes = self.employee_repository.get_image_employee(employee_id)
             if not employee_image_bytes:
-                return Response(False,"Employee image not found.",None)
+                return Response(False,"No Image",None)
             employee_image = Image.open(io.BytesIO(employee_image_bytes))
             return Response(True,"",employee_image)
         except Exception as e :

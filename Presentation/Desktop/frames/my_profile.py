@@ -131,7 +131,7 @@ class MyProfileFrame(Frame):
             self.label_image_employee.config(image=self.tk_employee_image)
         else:
             self.label_image_employee.config(image='')
-            self.label_image_employee.config(text="No Image")
+            self.label_image_employee.config(text=response_image.message)
 
         if response.success:
             self.entry_firstname.delete(0,"end")
@@ -152,8 +152,8 @@ class MyProfileFrame(Frame):
             elif response.data.status_id == EmployeeStatus.Active:
                 self.entry_status.insert(0, "Active")
                 self.entry_status.config(bootstyle=SUCCESS)
-            elif response.data.status_id == EmployeeStatus.Deactive:
-                self.entry_status.insert(0, "Deactive")
+            elif response.data.status_id == EmployeeStatus.Deactivate:
+                self.entry_status.insert(0, "Deactivate")
                 self.entry_status.config(bootstyle=DANGER)
             self.entry_status.config(state="readonly")
             self.entry_employee_role.config(state="normal")

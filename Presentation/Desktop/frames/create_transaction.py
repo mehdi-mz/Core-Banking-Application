@@ -64,8 +64,7 @@ class CreateTransaction(Frame):
         try:
             transaction_type = TransactionTypes[self.transaction_type_entry.get()]
         except KeyError:
-            Messagebox.show_error("Invalid Transaction Type!","Transaction Type Error")
-            return
+            return Messagebox.show_error("Invalid Transaction Type!","Transaction Type Error")
 
         username = self.manager.current_user.username
 
@@ -81,7 +80,7 @@ class CreateTransaction(Frame):
             self.transaction_type_entry.config(state="readonly")
             self.error_label.config(text="")
         else:
-            Messagebox.show_error(response.message,"Transaction Failed")
+            return Messagebox.show_error(response.message,"Transaction Failed")
 
 
 

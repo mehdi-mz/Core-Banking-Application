@@ -63,8 +63,8 @@ class TransactionBusinessLogic:
             total_balance_format=f"{total_balance:,.2f}"
 
             elements = []
-            doc = SimpleDocTemplate(file_path)                # یه فایل پی ادی اف آماده میکنه  <--------------------
-            styles = getSampleStyleSheet()                      # یه سری فونت بر می گردونه <-----------------------
+            doc = SimpleDocTemplate(file_path)
+            styles = getSampleStyleSheet()
 
             left_style = styles["Normal"]
             left_style.fontSize =18
@@ -77,7 +77,7 @@ class TransactionBusinessLogic:
                                       style=left_style)
 
             doc_paragraph = Paragraph(text=f"Transaction Report (Balance:{total_balance_format})",
-                                      style=styles["Title"])                # متن داخل پی دی اف و فونتش  <----------
+                                      style=styles["Title"])
 
             logo_path = r"assets\image\2048px-Bank_Melli_Iran_New_Logo.png"
             logo = Image(logo_path, width=100, height=100)

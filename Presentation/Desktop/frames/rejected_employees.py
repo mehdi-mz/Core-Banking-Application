@@ -47,7 +47,7 @@ class RejectEmployeeFrame(Frame):
                                                         "status",
                                                         "reject_date"
                                                     ))
-        self.reject_treeview.grid(row=2, column=0, columnspan=7, pady=(0, 10), padx=10, sticky="snew")
+        self.reject_treeview.grid(row=2, column=0, columnspan=7, pady=(0, 10), padx=10, sticky="nsew")
         self.reject_treeview.column("#0", width=50)
         self.reject_treeview.heading("#0", text="#")
         self.reject_treeview.heading("#1", text="First Name")
@@ -62,7 +62,7 @@ class RejectEmployeeFrame(Frame):
         for col in self.reject_treeview["columns"]:
             self.reject_treeview.column(col, width=120, anchor="center")
 
-        self.reject_treeview.bind("<Double-1>", self.doubel_clicked)
+        self.reject_treeview.bind("<Double-1>", self.double_clicked)
 
         pagination_frame = Frame(self)
         pagination_frame.grid(row=3, column=0, columnspan=7, pady=(0, 10))
@@ -96,12 +96,12 @@ class RejectEmployeeFrame(Frame):
                 self.reject_treeview.delete(row)
 
             for index, employee in enumerate(response.data):
-                rownumber = (page_number - 1) * page_size + index + 1
+                row_number = (page_number - 1) * page_size + index + 1
                 self.reject_treeview.insert(
                     "",
                     "end",
                     iid=employee.id,
-                    text=str(rownumber),
+                    text=str(row_number),
                     values=(
                         employee.firstname,
                         employee.lastname,
@@ -112,10 +112,11 @@ class RejectEmployeeFrame(Frame):
                     )
 
                 )
+            return response.data
         else:
-            Messagebox.show_error(response.message, "Failed!")
+            return Messagebox.show_error(response.message, "Failed!")
 
-    def doubel_clicked(self, event):
+    def double_clicked(self, event):
         employee_id = self.reject_treeview.focus()
         if not employee_id:
             return

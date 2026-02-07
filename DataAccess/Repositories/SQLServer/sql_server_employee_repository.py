@@ -50,7 +50,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
 
 
 
-    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_nationalcode,new_emil,role_id,new_status=None):
+    def update_profile(self,employee_id,new_firstname,new_lastname,new_username,new_national_code,new_emil,role_id,new_status=None):
         with self.creat_connection() as connection:
             cursor = connection.cursor()
             if new_status :
@@ -65,7 +65,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                 ,     Role_id  = %d
                                 ,     status_changed_date = getdate()
                                 where  id = %d
-                                """,(new_firstname,new_lastname,new_nationalcode,new_emil
+                                """,(new_firstname,new_lastname,new_national_code,new_emil
                                                                         ,new_username,new_status,role_id,employee_id))
                 connection.commit()
             else:
@@ -79,7 +79,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                                ,      Role_id  = %d
                                                where  id = %d
                                                """,
-                               (new_firstname, new_lastname, new_nationalcode, new_emil, new_username,role_id, employee_id))
+                               (new_firstname, new_lastname, new_national_code, new_emil, new_username,role_id, employee_id))
                 connection.commit()
 
             return cursor.rowcount
@@ -362,7 +362,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                 ,status_changed_date
                         from staff.Employee
                         where EmployeeStatus = 3
-                        order by regester_date desc
+                        order by status_changed_date desc
                         offset %d rows 
                         fetch next %d  rows only
                                  """,(skip_rows,page_size))

@@ -28,11 +28,11 @@ class HomeFrame(Frame):
 
     @PerformanceLogger
     def account_management_clicked(self):
-        account_manajment= self.manager.show_frame("account manajment")
-        account_manajment.load_data_to_account_management_treeview()
+        account_management= self.manager.show_frame("account management")
+        account_management.load_data_to_account_management_treeview()
 
     def set_current_user(self,current_user:Employee):
-        self.header_label.config(text=f"------- Welcom {current_user.full_name()} -------")
+        self.header_label.config(text=f"------- Welcome {current_user.full_name()} -------")
         self.current_user = current_user
 
 

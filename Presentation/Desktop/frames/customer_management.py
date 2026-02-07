@@ -31,9 +31,9 @@ class CustomerManagementFrame(Frame):
         self.search_button = Button(self, text="Search", command=self.search_clicked)
         self.search_button.grid(row=1, column=4, pady=(0, 10), padx=(0, 10), sticky="w")
 
-        self.deactive_customer_button = Button(self, text="Deactive Customer", state="disabled"
-                                               ,command=self.deactive_customer_button_clicked, bootstyle=DANGER)
-        self.deactive_customer_button.grid(row=2, column=0, pady=(0, 10), padx=10, sticky="ew")
+        self.deactivate_customer_button = Button(self, text="Deactivate Customer", state="disabled"
+                                               ,command=self.deactivate_customer_button_clicked, bootstyle=DANGER)
+        self.deactivate_customer_button.grid(row=2, column=0, pady=(0, 10), padx=10, sticky="ew")
 
         self.block_customer_button = Button(self, text="Block Customer", bootstyle=WARNING
                                             ,command=self.block_customer_button_clicked, state="disabled")
@@ -67,7 +67,7 @@ class CustomerManagementFrame(Frame):
         for col in self.customer_list_treeview["columns"]:
             self.customer_list_treeview.column(col, width=120, anchor="center")
 
-        self.customer_list_treeview.grid(row=3, column=0, columnspan=5, pady=(0, 10), padx=10, sticky="ewsn")
+        self.customer_list_treeview.grid(row=3, column=0, columnspan=5, pady=(0, 10), padx=10, sticky="nsew")
 
         self.customer_list_treeview.bind("<<TreeviewSelect>>", self.customer_select)
 
@@ -89,12 +89,12 @@ class CustomerManagementFrame(Frame):
         selection = self.customer_list_treeview.selection()
         if selection:
             self.selected_customer_id = selection[0]
-            self.deactive_customer_button.config(state="normal")
+            self.deactivate_customer_button.config(state="normal")
             self.block_customer_button.config(state="normal")
             self.update_customer_button.config(state="normal")
             self.view_accounts_button.config(state="normal")
         else:
-            self.deactive_customer_button.config(state="disabled")
+            self.deactivate_customer_button.config(state="disabled")
             self.block_customer_button.config(state="disabled")
             self.update_customer_button.config(state="disabled")
             self.view_accounts_button.config(state="disabled")
@@ -126,12 +126,12 @@ class CustomerManagementFrame(Frame):
                 self.customer_list_treeview.delete(row)
 
             for index, customer in enumerate(response.data):
-                rownumber = (page_number - 1) * page_size + index + 1
+                row_number = (page_number - 1) * page_size + index + 1
                 self.customer_list_treeview.insert(
                     "",
                     "end",
                     iid=customer.customer_id,
-                    text=str(rownumber),
+                    text=str(row_number),
                     values=(
                         customer.firstname
                         ,customer.lastname,
@@ -142,7 +142,7 @@ class CustomerManagementFrame(Frame):
                 )
             return response.data
         else:
-            Messagebox.show_error(response.message, "Failed")
+            return Messagebox.show_error(response.message, "Failed")
 
     def load_next_data_to_treeview(self):
         current_size = int(self.current_page_label.cget("text"))
@@ -175,7 +175,7 @@ class CustomerManagementFrame(Frame):
         update_customer = self.manager.show_frame("update customer")
         update_customer.set_entry(customer_id)
 
-    def deactive_customer_button_clicked(self):
+    def deactivate_customer_button_clicked(self):
         self.customer_id = self.selected_customer_id
         self.window = Toplevel(self)
 

@@ -6,11 +6,11 @@ from Common.Decorators.performance_logger_decorator import PerformanceLogger
 
 
 
-class AccountManagmentFrame(Frame):
+class AccountManagementFrame(Frame):
     def __init__(self,window,manager,account_business,customer_business):
         super().__init__(window)
 
-        self.account_bisiness = account_business
+        self.account_business = account_business
         self.customer_business = customer_business
         self.manager=manager
 
@@ -78,7 +78,7 @@ class AccountManagmentFrame(Frame):
             self.account_list_treeview.column(col, width=120, anchor="center")
 
 
-        self.account_list_treeview.grid(row=3,column=0,columnspan=5,pady=(0,10),padx=10,sticky="ewsn")
+        self.account_list_treeview.grid(row=3,column=0,columnspan=5,pady=(0,10),padx=10,sticky="nsew")
 
         self. account_list_treeview.bind("<<TreeviewSelect>>",self.account_select)
 
@@ -126,9 +126,9 @@ class AccountManagmentFrame(Frame):
         self.page_size = page_size
         term = self.search_entry.get().strip()
         if term:
-            response = self.account_bisiness.get_account_list(page_number, page_size,term)
+            response = self.account_business.get_account_list(page_number, page_size,term)
         else:
-            response = self.account_bisiness.get_account_list(page_number,page_size)
+            response = self.account_business.get_account_list(page_number,page_size)
 
 
 
@@ -156,7 +156,7 @@ class AccountManagmentFrame(Frame):
                 )
             return response.data
         else:
-            Messagebox.show_error(response.message,"Failed")
+             return Messagebox.show_error(response.message,"Failed")
 
 
     def load_next_data_to_treeview(self):
@@ -178,7 +178,7 @@ class AccountManagmentFrame(Frame):
     @PerformanceLogger
     def transaction_button_clicked(self):
 
-        transaction_frame= self.manager.show_frame("Transaction Manajement")
+        transaction_frame= self.manager.show_frame("Transaction Management")
         account_number = self.account_list_treeview.selection()[0]
         transaction_frame.data_load_to_transaction_treeview(account_number)
 
@@ -242,8 +242,8 @@ class AccountManagmentFrame(Frame):
     @PerformanceLogger
     def update_account_clicked(self):
         account_number = self.account_list_treeview.selection()[0]
-        update_accont = self.manager.show_frame("update account")
-        update_accont.set_entry(account_number)
+        update_account = self.manager.show_frame("update account")
+        update_account.set_entry(account_number)
 
     def show_customers_clicked(self):
         customer_management = self.manager.show_frame("customer management")

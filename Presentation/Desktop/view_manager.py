@@ -4,15 +4,15 @@ from Presentation.Desktop.Window import ApplicationWindow
 from Presentation.Desktop.frames.Login import LoginFrame
 from Presentation.Desktop.frames.Register import RegisterFrame
 from Presentation.Desktop.frames.home import HomeFrame
-from Presentation.Desktop.frames.account_management import AccountManagmentFrame
+from Presentation.Desktop.frames.account_management import AccountManagementFrame
 from Presentation.Desktop.frames.reset_password import ResetPasswordFrame
 from Presentation.Desktop.frames.my_profile import MyProfileFrame
-from Presentation.Desktop.frames.transaction_manajement import TransactionManajementFrame
+from Presentation.Desktop.frames.transaction_manajement import TransactionManagementFrame
 from Presentation.Desktop.frames.create_transaction import CreateTransaction
 from Presentation.Desktop.frames.create_customer import CreateCustomerFrame
 from Presentation.Desktop.frames.admin_home import AdminHomeFrame
 from Presentation.Desktop.frames.employee_request_approval import EmployeeRequestApprovalFrame
-from Presentation.Desktop.frames.employee_management import EmployeeManagmentFrame
+from Presentation.Desktop.frames.employee_management import EmployeeManagementFrame
 from Presentation.Desktop.frames.update_employee import UpdateEmployeeFrame
 from Presentation.Desktop.frames.customer_management import CustomerManagementFrame
 from Presentation.Desktop.frames.deactivated_employees import DeactivatedEmployeeFrame
@@ -42,14 +42,14 @@ class ViewManager:
         self.current_user=None
 
         self.frames={}
-        self.histori=[]
+        self.history=[]
         self.current_frame = None
         self.window=ApplicationWindow()
 
         self.navbar = Navbar(self.window,self)
         self.navbar.grid(row=0,column=0,sticky="ew")
 
-        self.add_frame("create transation",CreateTransaction(self.window,self,transaction_business),(500,450))
+        self.add_frame("create transaction",CreateTransaction(self.window,self,transaction_business),(500,450))
         self.add_frame("card to card",TransferFromCard(self.window,self,transaction_business,customer_business),(500,450))
 
         self.add_frame("customer accounts",CustomerAccountsFrame(self.window,self,account_business,customer_business),(1500,650))
@@ -72,9 +72,9 @@ class ViewManager:
         self.add_frame("request approval",EmployeeRequestApprovalFrame(self.window,self,employee_business),(1000,600))
 
 
-        self.add_frame("employee management",EmployeeManagmentFrame(self.window,self,employee_business),(1360,700))
-        self.add_frame("account manajment", AccountManagmentFrame(self.window, self, account_business,customer_business), (1500, 650))
-        self.add_frame("Transaction Manajement", TransactionManajementFrame(self.window, self,transaction_business), (1400,650))
+        self.add_frame("employee management", EmployeeManagementFrame(self.window, self, employee_business), (1360, 700))
+        self.add_frame("account management", AccountManagementFrame(self.window, self, account_business, customer_business), (1500, 650))
+        self.add_frame("Transaction Management", TransactionManagementFrame(self.window, self, transaction_business), (1400, 650))
         self.add_frame("customer management", CustomerManagementFrame(self.window, self,customer_business),(1500, 650))
 
         self.add_frame("Home", HomeFrame(self.window, self), (600,400))
@@ -92,19 +92,19 @@ class ViewManager:
 
     def add_frame(self,name,frame,size):
         self.frames[name]=(frame,size)
-        self.frames[name][0].grid(row=1,column=0,sticky="snew")
+        self.frames[name][0].grid(row=1,column=0,sticky="nsew")
 
 
-    def resaze_window(self,frame_name):
+    def resize_window(self,frame_name):
         current_frame_data=self.frames[frame_name]
         frame_size=current_frame_data[1]
-        self.window.resaiz(*frame_size)
+        self.window.resize(*frame_size)
 
 
     def show_frame(self,name,**kwargs):
         if self.current_frame:
-            self.histori.append(self.current_frame)
-        self.resaze_window(name)
+            self.history.append(self.current_frame)
+        self.resize_window(name)
         frame = self.frames[name][0]
         self.current_frame = name
         frame.tkraise()
@@ -112,11 +112,11 @@ class ViewManager:
 
     @PerformanceLogger
     def back(self):
-        if not self.histori:
+        if not self.history:
             return None
-        previous = self.histori.pop()
+        previous = self.history.pop()
         self.current_frame = previous
-        self.resaze_window(previous)
+        self.resize_window(previous)
         frame = self.frames[previous][0]
         frame.tkraise()
         return frame

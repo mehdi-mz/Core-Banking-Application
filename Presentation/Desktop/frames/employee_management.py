@@ -5,11 +5,11 @@ from Common.Decorators.performance_logger_decorator import PerformanceLogger
 
 
 
-class EmployeeManagmentFrame(Frame):
-    def __init__(self,window,manager,employee_bisiness):
+class EmployeeManagementFrame(Frame):
+    def __init__(self,window,manager,employee_business):
         super().__init__(window)
 
-        self.employee_bisiness = employee_bisiness
+        self.employee_business = employee_business
         self.manager=manager
 
 
@@ -75,7 +75,7 @@ class EmployeeManagmentFrame(Frame):
 
 
 
-        self.employee_list_treeview.grid(row=3,column=0,columnspan=5,pady=(0,10),padx=10,sticky="ewsn")
+        self.employee_list_treeview.grid(row=3,column=0,columnspan=5,pady=(0,10),padx=10,sticky="nsew")
 
         self. employee_list_treeview.bind("<<TreeviewSelect>>",self.employee_select)
 
@@ -124,7 +124,7 @@ class EmployeeManagmentFrame(Frame):
             self.next_page_butten.config(state="normal")
         self.page_size =page_size
         term = self.search_entry.get().strip()
-        response = self.employee_bisiness.employee_management(page_number,page_size, term if term else None)
+        response = self.employee_business.employee_management(page_number,page_size, term if term else None)
 
 
 
@@ -135,12 +135,12 @@ class EmployeeManagmentFrame(Frame):
 
 
             for index,employee in enumerate(response.data):
-                rownumber = (page_number - 1) * page_size + index + 1
+                row_number = (page_number - 1) * page_size + index + 1
                 self.employee_list_treeview.insert(
                     "",
                     "end",
                     iid=employee.id,
-                    text=str(rownumber),
+                    text=str(row_number),
                     values=(
                         employee.firstname,
                         employee.lastname,
@@ -152,7 +152,7 @@ class EmployeeManagmentFrame(Frame):
                 )
             return response.data
         else:
-            Messagebox.show_error(response.message,"Failed!")
+            return Messagebox.show_error(response.message,"Failed!")
 
 
     def load_next_data_to_treeview(self):

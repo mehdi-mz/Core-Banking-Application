@@ -5,8 +5,8 @@ class CardStatusValidator(BaseHandler):
 
 
     def handel(self, request):
-        if request.card.account_status == AccountStatus.Deactive:
-            raise ValueError("Card is Deactive. Cannot create a transaction. ❌")
+        if request.card.account_status == AccountStatus.Deactivate:
+            raise ValueError("Card is Deactivate. Cannot create a transaction. ❌")
 
         if request.card.account_status == AccountStatus.Block:
             raise ValueError("Card is Blocked. Cannot create a transaction. ❌")

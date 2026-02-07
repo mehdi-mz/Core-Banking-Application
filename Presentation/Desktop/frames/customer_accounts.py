@@ -10,7 +10,7 @@ class CustomerAccountsFrame(Frame):
     def __init__(self,window,manager,account_business,customer_business):
         super().__init__(window)
 
-        self.account_bisiness = account_business
+        self.account_business = account_business
         self.customer_business = customer_business
         self.manager=manager
 
@@ -96,7 +96,7 @@ class CustomerAccountsFrame(Frame):
     @PerformanceLogger
     def load_data_to_account_management_treeview(self,customer_id):
         self.customer_id = customer_id
-        response = self.account_bisiness.customer_accounts(customer_id)
+        response = self.account_business.customer_accounts(customer_id)
 
 
         if response.success:
@@ -128,7 +128,7 @@ class CustomerAccountsFrame(Frame):
     @PerformanceLogger
     def transaction_button_clicked(self):
 
-        transaction_frame= self.manager.show_frame("Transaction Manajement")
+        transaction_frame= self.manager.show_frame("Transaction Management")
         account_number = self.account_list_treeview.selection()[0]
         transaction_frame.data_load_to_transaction_treeview(account_number)
 

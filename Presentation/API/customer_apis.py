@@ -53,19 +53,3 @@ def create_customer_api(create_customer : CreateCustomerDTO
 
     return {"message": "Customer Created.✅"}
 
-#
-# @router_customer.put("/")
-# def update_customer_api():
-#     pass
-
-#
-# @router_customer.get("/")
-# def block_customer_api():
-#     pass
-#
-#
-# @router_customer.get("/")
-# def deactive_customer_api():
-#     pass
-
-

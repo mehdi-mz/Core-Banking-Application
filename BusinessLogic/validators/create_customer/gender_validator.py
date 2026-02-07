@@ -8,8 +8,5 @@ class GenderValidator(BaseHandler):
             raise ValueError("Invalid Gender type.")
 
 
-
-            # raise ValueError("Gender cannot be empty.")
-
         if self.next_handler:
             self.next_handler.handel(request)

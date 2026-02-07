@@ -28,10 +28,10 @@ class RegisterFrame(Frame):
         self.entry_lastname = Entry(self)
         self.entry_lastname.grid(row=2, column=1, padx=(0, 10), pady=(0, 10), sticky="ew")
 
-        self.label_nationalcode = Label(self, text="National Code")
-        self.label_nationalcode.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="w")
-        self.entry_nationalcode = Entry(self)
-        self.entry_nationalcode.grid(row=3, column=1, padx=(0, 10), pady=(0, 10), sticky="ew")
+        self.label_national_code = Label(self, text="National Code")
+        self.label_national_code.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="w")
+        self.entry_national_code = Entry(self)
+        self.entry_national_code.grid(row=3, column=1, padx=(0, 10), pady=(0, 10), sticky="ew")
 
         self.label_email = Label(self, text="Email")
         self.label_email.grid(row=4, column=0, padx=10, pady=(0, 10), sticky="w")
@@ -73,13 +73,13 @@ class RegisterFrame(Frame):
     def butten_register_clicked(self):
         firstname=self.entry_firstname.get()
         lastname=self.entry_lastname.get()
-        nationalcode=self.entry_nationalcode.get()
+        national_code=self.entry_national_code.get()
         email=self.entry_email.get()
         username=self.entry_username.get()
         password=self.entry_password.get_password_value()
         confirm_password = self.entry_confirm_password.get_password_value()
 
-        response = self.employee_business.register_employee(firstname, lastname, nationalcode,
+        response = self.employee_business.register_employee(firstname, lastname, national_code,
                                                             email, username,password ,confirm_password)
         if response.success:
             Messagebox.show_info(response.message,"✅")
@@ -87,7 +87,7 @@ class RegisterFrame(Frame):
 
             self.entry_firstname.delete(0,"end")
             self.entry_lastname.delete(0,"end")
-            self.entry_nationalcode.delete(0,"end")
+            self.entry_national_code.delete(0,"end")
             self.entry_email.delete(0,"end")
             self.entry_username.delete(0,"end")
             self.entry_password.clear()

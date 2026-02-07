@@ -42,13 +42,13 @@ class UpdateAccountFrame(Frame):
 
         self.label_type = Label(self, text="Account Type")
         self.label_type.grid(row=3, column=0, pady=(0, 10), padx=10, sticky="e")
-        self.account_type = Combobox(self, values=[accounttype.name.replace("_"," ") for accounttype in AccountTypes],
+        self.account_type = Combobox(self, values=[account_type.name.replace("_"," ") for account_type in AccountTypes],
                                      state="readonly")
         self.account_type.grid(row=3, column=1, columnspan=4, padx=(0, 10), pady=(0, 10), sticky="ew")
 
         self.label_type = Label(self, text="Account Status")
         self.label_type.grid(row=4, column=0, pady=(0, 10), padx=10, sticky="e")
-        self.account_status = Combobox(self, values=[accountstatus.name for accountstatus in AccountStatus ], state="readonly")
+        self.account_status = Combobox(self, values=[account_status.name for account_status in AccountStatus ], state="readonly")
         self.account_status.grid(row=4, column=1, columnspan=4, padx=(0, 10), pady=(0, 10), sticky="ew")
 
         self.error_account = Label(self)
@@ -111,7 +111,7 @@ class UpdateAccountFrame(Frame):
             if response.data.account_status == AccountStatus.Active:
                 self.account_status.insert(0, response.data.account_status.name)
                 self.account_status.config(bootstyle=SUCCESS)
-            elif  response.data.account_status == AccountStatus.Deactive:
+            elif  response.data.account_status == AccountStatus.Deactivate:
                 self.account_status.insert(0, response.data.account_status.name)
                 self.account_status.config(bootstyle=DANGER)
             elif  response.data.account_status == AccountStatus.Block:

@@ -36,10 +36,10 @@ class UpdateCustomerFrame(Frame):
         self.entry_lastname = Entry(self)
         self.entry_lastname.grid(row=1, column=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_nationalcode = Label(self, text="National Code")
-        self.label_nationalcode.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_nationalcode = Entry(self)
-        self.entry_nationalcode.grid(row=2, column=1, columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
+        self.label_national_code = Label(self, text="National Code")
+        self.label_national_code.grid(row=2, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_national_code = Entry(self)
+        self.entry_national_code.grid(row=2, column=1, columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
         self.label_phon = Label(self, text="Phon Number")
         self.label_phon.grid(row=3, column=0, padx=10, pady=(0, 10), sticky="e")
@@ -51,10 +51,10 @@ class UpdateCustomerFrame(Frame):
         self.entry_email = Entry(self)
         self.entry_email.grid(row=4, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
-        self.label_brithdate = Label(self, text="Brith Date")
-        self.label_brithdate.grid(row=5, column=0, padx=10, pady=(0, 10), sticky="e")
-        self.entry_brithdate = Entry(self)
-        self.entry_brithdate.grid(row=5, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
+        self.label_brith_date = Label(self, text="Brith Date")
+        self.label_brith_date.grid(row=5, column=0, padx=10, pady=(0, 10), sticky="e")
+        self.entry_brith_date = Entry(self)
+        self.entry_brith_date.grid(row=5, column=1,columnspan=4, pady=(0, 10), padx=(0, 10), sticky="ew")
 
         self.label_gender = Label(self, text="Gender")
         self.label_gender.grid(row=6, column=0, padx=10, pady=(0, 10), sticky="e")
@@ -74,14 +74,14 @@ class UpdateCustomerFrame(Frame):
     def save_profile_button_clicked(self):
         new_firstname = self.entry_firstname.get()
         new_lastname = self.entry_lastname.get()
-        new_nationalcode = self.entry_nationalcode.get()
-        new_phonenumber = self.entry_phon.get()
+        new_national_code = self.entry_national_code.get()
+        new_phone_number = self.entry_phon.get()
         new_email = self.entry_email.get()
-        new_birthdate = self.entry_brithdate.get()
+        new_birthdate = self.entry_brith_date.get()
         new_gender = self.entry_gender.get()
 
         response = self.customer_business.update_customer(self.customer_id,new_firstname,new_lastname
-                                               ,new_nationalcode,new_phonenumber,new_email,new_birthdate,new_gender)
+                                               ,new_national_code,new_phone_number,new_email,new_birthdate,new_gender)
         if response.success:
             Messagebox.show_info(response.message,"Success")
 
@@ -97,14 +97,14 @@ class UpdateCustomerFrame(Frame):
             self.entry_firstname.insert(0,response.data.firstname)
             self.entry_lastname.delete(0, "end")
             self.entry_lastname.insert(0,response.data.lastname)
-            self.entry_nationalcode.delete(0, "end")
-            self.entry_nationalcode.insert(0,response.data.national_code)
+            self.entry_national_code.delete(0, "end")
+            self.entry_national_code.insert(0,response.data.national_code)
             self.entry_phon.delete(0, "end")
             self.entry_phon.insert(0,response.data.phon_number)
             self.entry_email.delete(0, "end")
             self.entry_email.insert(0,response.data.email)
-            self.entry_brithdate.delete(0, "end")
-            self.entry_brithdate.insert(0,response.data.birth_date)
+            self.entry_brith_date.delete(0, "end")
+            self.entry_brith_date.insert(0,response.data.birth_date)
 
             self.entry_gender.config(state="normal")
             self.entry_gender.delete(0,"end")
