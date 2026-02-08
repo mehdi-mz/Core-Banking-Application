@@ -305,7 +305,7 @@ class SQLServerEmployeeRepository(IEmployeeRepository):
                                 ,status_changed_date
                         from staff.Employee
                         where EmployeeStatus = 4
-                        order by regester_date desc
+                        order by status_changed_date desc
                         offset %d rows 
                         fetch next %d  rows only
                                  """,(skip_rows,page_size))

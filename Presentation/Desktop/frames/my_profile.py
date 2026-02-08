@@ -166,6 +166,8 @@ class MyProfileFrame(Frame):
         else:
             Messagebox.show_error("My Profile load failed.","error")
 
+
+    @PerformanceLogger
     def image_edit_clicked(self):
         file_path = filedialog.askopenfilename( title="Select Profile Image",
                                                 filetypes=[

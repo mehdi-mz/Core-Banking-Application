@@ -58,7 +58,7 @@ class TransferFromCard(Frame):
         self.full_name.grid(row=6,column=1,padx=(0,10),pady=10,sticky="ew")
 
         self.ok_button = Button(self, text="Ok",state="disabled",bootstyle=SUCCESS
-                                , command=self.ok_button_clicked)
+                                , command=self.ok_button_card_to_card_clicked)
         self.ok_button.grid(row=7, column=0, columnspan=2, pady=10, padx=(0, 10))
 
 
@@ -89,8 +89,8 @@ class TransferFromCard(Frame):
         else:
             self.error_label.config(text="Amount cannot be empty.", bootstyle=DANGER)
 
-
-    def ok_button_clicked(self):
+    @PerformanceLogger
+    def ok_button_card_to_card_clicked(self):
         username = self.manager.current_user.username
         transaction_type = TransactionTypes.Card_To_Card_Out
         amount = float(self.amount.replace(",", ""))
